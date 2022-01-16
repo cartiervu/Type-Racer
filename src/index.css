@@ -11,11 +11,15 @@
     display: inline-block;
 }
 
-.one {
+.quote-correct {
     color:blue;
 }
 
-.two {
+.quote-mistake {
+    color:red;
+}
+
+.quote-todo {
     color:black;
 }
 
@@ -24,5 +28,5 @@
 }
 
 #text-box {
-    opacity: 0;
+    /* opacity: 0; */
 }
