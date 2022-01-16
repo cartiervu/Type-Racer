@@ -12,9 +12,10 @@ const App = () => {
   const [userText, setUserText] = useState('');
   const [mistakeText, setMistakeText] = useState('');
   const [timer, setTimer] = useState({startTime: null, endTime: null})
+  const [disabled, setDisabled] = useState(false);
 
-  const quote = "Even the world's most successful individuals have experienced their fair share of setbacks and hardships. There's much to learn from their challenges as well as their success. Luckily, they've condensed their wisdom into meaningful quotes that you can store for later use."
-
+  const quote = "I must not fear. Fear is the mind-killer. Fear is the little-death that brings total obliteration. I will face my fear. I will permit it to pass over me and through me. And when it has gone past I will turn the inner eye to see its path. Where the fear has gone there will be nothing. Only I will remain.";
+  
   if (timer.endTime) displayWPM(timer, (quote.split(" ")).length);
   const handleUserTextChange = (event) => {
     if (!timer.startTime) {
@@ -38,6 +39,7 @@ const App = () => {
         const copy = userText.concat(event.key);
         setUserText(copy);
         if (copy === quote) {
+          setDisabled(true);
           const newTimer = {
             ...timer,
             endTime: performance.now(),
@@ -59,7 +61,7 @@ const App = () => {
       </div>
       <p></p>
       <div id="text-box">
-        <input onKeyDown={(e) => handleUserTextChange(e)} style={{width: "500px"}} autoFocus />
+        <input disabled={disabled} onKeyDown={(e) => handleUserTextChange(e)} style={{width: "500px"}} autoFocus />
       </div>
     </div>
   )
