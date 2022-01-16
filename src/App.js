@@ -17,7 +17,9 @@ const App = () => {
   
   return (
     <div>
-      <DisplayQuote quote={quote} />
+      <DisplayQuote cName='one' quote={quote.substring(0,userText.length)} />
+      <DisplayQuote cName='two' quote={quote.substring(userText.length,quote.length)} />
+      <p></p>
       <form>
         <input 
           value={userText}

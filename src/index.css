@@ -1,5 +1,6 @@
 .quotebox {
     width: 500px;
+    display: inline;
 }
 
 .word {
@@ -8,4 +9,12 @@
 
 .letter {
     display: inline-block;
+}
+
+.one {
+    color:green;
+}
+
+.two {
+    color:black;
 }
