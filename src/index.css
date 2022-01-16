@@ -3,7 +3,7 @@
 }
 
 .word {
-    display: inline-block
+    display: inline;
 }
 
 .letter {
