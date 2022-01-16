@@ -19,4 +19,5 @@ const DisplayQuote = ({ quote, cName}) => {
   )
 }
 
+
 export default DisplayQuote
