@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&display=swap');
 
+.word{
+  white-space: break-spaces;
+}
+
 .quotebox {
 display: inline;
 font-size: 2em;
@@ -36,5 +40,5 @@ min-height: 90vh;
 }
 
 #text-box {
-    opacity: 0;
+    /* opacity: 0; */
 }
