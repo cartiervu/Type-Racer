@@ -5,10 +5,16 @@ import DisplayQuote from './components/DisplayQuote'
 const App = () => {
   const [userText, setUserText] = useState('');
   const [mistakeText, setMistakeText] = useState('');
+  const [timer, setTimer] = useState({startTime: null, endTime: null})
   const quote = "Even the world's most successful individuals have experienced their fair share of setbacks and hardships. There's much to learn from their challenges as well as their success. Luckily, they've condensed their wisdom into meaningful quotes that you can store for later use."
-
   const handleUserTextChange = (event) => {
-    console.log(userText)
+    if (timer.startTime === null) {
+      const newTimer = {
+        ...timer,
+        startTime: performance.now(),
+      };
+      setTimer(newTimer);
+    }
     if (event.key === 'Backspace') {
       if (mistakeText.length > 0) {
         setMistakeText(mistakeText.substring(0, mistakeText.length - 1));
@@ -20,14 +26,22 @@ const App = () => {
         let temp = mistakeText;
         setMistakeText(temp.concat(event.key));
       } else {
-        let temp = userText;
-        setUserText(temp.concat(event.key));
+        let temp = userText.concat(event.key);
+        setUserText(temp);
+        if (temp === quote) {
+          const newTimer = {
+            ...timer,
+            endTime: performance.now(),
+          };
+          console.log((newTimer.endTime - newTimer.startTime) / 1000);
+          setTimer(newTimer);
+        }
       }
     } else if (event.key.length === 1){
       // A mistake was made
       let temp = mistakeText;
       // Regex to filter alphanumeric only - .replace(/[\W_]+/g," "
-      setMistakeText(temp.concat(event.key));
+      setMistakeText(temp.concat(event.key)); 
     }
   }
   
