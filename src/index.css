@@ -1,0 +1,11 @@
+.quotebox {
+    width: 500px;
+}
+
+.word {
+    display: inline-block
+}
+
+.letter {
+    display: inline-block;
+}
