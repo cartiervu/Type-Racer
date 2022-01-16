@@ -2,6 +2,7 @@ import React from 'react'
 
 const DisplayWord = ({ word, containsCursor }) => {
   let charArray = word.split("");
+
   if (containsCursor) {
     return (
       <div className="word">
@@ -21,7 +22,6 @@ const DisplayWord = ({ word, containsCursor }) => {
 const DisplayQuote = ({ quote, cName, containsCursor = false}) => {
   let wordArray = (quote.split(" ")).map(word => word + " ");
   wordArray[wordArray.length-1] = wordArray.at(-1).slice(0,-1);
-
   if (containsCursor) {
     return (
       <div className={`quotebox ${cName}`}>
