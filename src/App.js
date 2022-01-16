@@ -52,9 +52,11 @@ const App = () => {
   
   return (
     <div class="text-container">
+      <div class="text-staging">
       <DisplayQuote cName='quote-correct' quote={quote.substring(0,userText.length)} />
-      <DisplayQuote cName='quote-mistake' quote={mistakeText} />
-      <DisplayQuote cName='quote-todo' quote={quote.substring(userText.length,quote.length)} />
+        <DisplayQuote cName='quote-mistake' quote={mistakeText} />
+        <DisplayQuote cName='quote-todo' quote={quote.substring(userText.length,quote.length)} />
+      </div>
       <p></p>
       <div id="text-box">
         <input onKeyDown={(e) => handleUserTextChange(e)} style={{width: "500px"}} autoFocus />

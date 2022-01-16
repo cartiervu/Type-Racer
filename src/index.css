@@ -1,32 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&display=swap');
+
 .quotebox {
-    display: inline;
-    font-size: 18px;
+display: inline;
+font-size: 2em;
+font-family: 'Roboto Mono', monospace;
 }
 
 .word {
-    display: inline;
-}
-
-.letter {
-    display: inline-block;
+display: inline;
 }
 
 .quote-correct {
-    color:blue;
+color:blue;
 }
 
 .quote-mistake {
-    color:red;
+color:red;
 }
 
 .quote-todo {
-    color:black;
+color:black;
 }
 
 .text-container {
-    width: 500px;
+width: 800px;
+margin-left:auto;
+margin-right:auto;
+display:flex;
+flex-direction: column;
+justify-content: center;
+
+/* Items to the middle */
+align-items: center;
+min-height: 90vh;
 }
 
 #text-box {
-    /* opacity: 0; */
+/* opacity: 0; */
 }
