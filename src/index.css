@@ -1,6 +1,6 @@
 .quotebox {
-    width: 500px;
     display: inline;
+    font-size: 18px;
 }
 
 .word {
@@ -12,9 +12,17 @@
 }
 
 .one {
-    color:green;
+    color:blue;
 }
 
 .two {
     color:black;
+}
+
+.text-container {
+    width: 500px;
+}
+
+#text-box {
+    opacity: 0;
 }
