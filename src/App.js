@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import DisplayQuote from './components/DisplayQuote'
+import UserTextDisplay from './components/UserText';
 
 async function getRandomWikiPage() {
   const endpoint = `https://en.wikipedia.org/w/api.php?format=json&origin=*&action=query&generator=random&grnnamespace=0&prop=revisions%7Cimages&rvprop=content&grnlimit=25`
@@ -56,64 +56,29 @@ const App = () => {
   })()  
 
   return (
-  <Main quote={quote}/>
+    <Main quote={quote}/>
   )
-  
 }
 
 const Main = ({quote}) => {
-  const [userText, setUserText] = useState('');
-  const [mistakeText, setMistakeText] = useState('');
-  const [timer, setTimer] = useState({startTime: null, endTime: null})
-  const [disabled, setDisabled] = useState(false);
+  const [timer, setTimer] = useState({
+    startTime: null,
+    endTime: null
+  });
 
   if (timer.endTime) displayWPM(timer, (quote.split(" ")).length);
-  const handleUserTextChange = (event) => {
-    if (!timer.startTime) {
-      const newTimer = {
-        ...timer,
-        startTime: performance.now(),
-      };
-      setTimer(newTimer);
-    }
-
-    if (event.key === 'Backspace') {
-      if (mistakeText.length > 0) {
-        setMistakeText(mistakeText.substring(0, mistakeText.length - 1));
-      } else {
-        setUserText(userText.substring(0, userText.length - 1));
-      }
-    } else if (event.key === quote.charAt(userText.length)) {
-      if (mistakeText.length > 0) {
-        setMistakeText(mistakeText.concat(event.key));
-      } else {
-        const copy = userText.concat(event.key);
-        setUserText(copy);
-        if (copy === quote) {
-          setDisabled(true);
-          const newTimer = {
-            ...timer,
-            endTime: performance.now(),
-          };
-          setTimer(newTimer);
-        }
-      }
-    } else if (event.key.length === 1){
-      setMistakeText(mistakeText.concat(event.key)); 
-    }
-  }
   
+  const handleOnFinish = () => {
+    const newTimer = {
+      ...timer,
+      endTime: performance.now(),
+    };
+    setTimer(newTimer);
+  }
+
   return (
     <div className="text-container">
-      <div className="text-staging">
-        <DisplayQuote cName='quote-correct' quote={quote.substring(0,userText.length)} />
-        <DisplayQuote cName='quote-mistake' quote={mistakeText} />
-        <DisplayQuote cName='quote-todo' containsCursor={true} quote={quote.substring(userText.length,quote.length)} />
-      </div>
-      <p></p>
-      <div id="text-box">
-        <input disabled={disabled} onKeyDown={(e) => handleUserTextChange(e)} style={{width: "500px"}} autoFocus />
-      </div>
+      <UserTextDisplay quote={quote} timer={timer} onFinish={(handleOnFinish)}/>
     </div>
   )
 }

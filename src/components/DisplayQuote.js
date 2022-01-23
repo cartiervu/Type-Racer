@@ -19,9 +19,10 @@ const DisplayWord = ({ word, containsCursor }) => {
   )
 }
 
-const DisplayQuote = ({ quote, cName, containsCursor = false}) => {
+export default function DisplayQuote({ quote, cName, containsCursor = false}) {
   let wordArray = (quote.split(" ")).map(word => word + " ");
   wordArray[wordArray.length-1] = wordArray.at(-1).slice(0,-1);
+
   if (containsCursor) {
     return (
       <div className={`quotebox ${cName}`}>
@@ -33,10 +34,7 @@ const DisplayQuote = ({ quote, cName, containsCursor = false}) => {
   
   return (
     <div className={`quotebox ${cName}`}>
-      {wordArray.map((word, i) => <DisplayWord key = {i} word={word}/>)}
+      {wordArray.map((word, i) => <DisplayWord key={i} word={word}/>)}
     </div>
   )
 }
-
-
-export default DisplayQuote
