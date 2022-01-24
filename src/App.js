@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import UserTextDisplay from './components/UserText';
+import Text from './components/UserText';
+import DisplayResults from './components/DisplayResults'
 
 async function getRandomWikiPage() {
   const endpoint = `https://en.wikipedia.org/w/api.php?format=json&origin=*&action=query&generator=random&grnnamespace=0&prop=revisions%7Cimages&rvprop=content&grnlimit=25`
@@ -23,7 +24,6 @@ async function getRandomWikiPage() {
   }
 }
 
-
 async function searchWikipedia(id) {
   const endpoint = `https://en.wikipedia.org/w/api.php?format=json&origin=*&action=query&prop=extracts&exintro&explaintext&redirects=1&pageids=${id}`;
   const response = await fetch(endpoint);
@@ -33,15 +33,6 @@ async function searchWikipedia(id) {
   const json = await response.json();
 
   return json.query.pages[id].extract;
-}
-
-
-
-const displayWPM = (timer, wordCount) => {
-  console.log(timer, wordCount)
-  const timeElapsed = (timer.endTime - timer.startTime) / 60000;
-  const wordsPerMinute = wordCount / timeElapsed;
-  console.log("Words Per Minute: " + wordsPerMinute);
 }
 
 const App = () => {
@@ -66,8 +57,6 @@ const Main = ({quote}) => {
     endTime: null
   });
 
-  if (timer.endTime) displayWPM(timer, (quote.split(" ")).length);
-  
   const handleOnFinish = () => {
     const newTimer = {
       ...timer,
@@ -78,11 +67,13 @@ const Main = ({quote}) => {
 
   return (
     <div className="text-container">
-      <UserTextDisplay quote={quote} timer={timer} onFinish={(handleOnFinish)}/>
+      {!timer.endTime ? (
+        <Text quote={quote} timer={timer} onFinish={(handleOnFinish)}/>
+        ) : (
+          <DisplayResults quote={quote} timer={timer}/>
+        )}
     </div>
   )
 }
-
-
 
 export default App
