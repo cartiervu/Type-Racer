@@ -45,3 +45,20 @@ min-height: 90vh;
 #text-box {
     opacity: 0;
 }
+
+.leaderboard {
+  display: flex;
+  flex-direction: column;
+}
+
+.leaderboard-header {
+  padding-bottom: 15px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.player-score-container, .leaderboard-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
