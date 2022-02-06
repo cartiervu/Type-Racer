@@ -18,7 +18,7 @@ async function getRandomWikiPage() {
       result = result.replace(/[^\x00-\x7F]/g, "");
       result = result.replace("  ", " ")
       
-      if (result.length > 25 && result.length < 250) {
+      if (result.length > 25 && result.length < 100) {
           return result;
       }
       // return result;
@@ -42,11 +42,13 @@ export default function App({ scores }) {
     startTime: null,
     endTime: null
   });
+  const [active, setActive] = useState(true);
+  
 
   useEffect(() => {
     getRandomWikiPage()
       .then(response => setQuote(response))
-  }, []);
+  }, [active]);
 
   const handleOnFinish = () => {
     const newTimer = {
@@ -56,12 +58,21 @@ export default function App({ scores }) {
     setTimer(newTimer);
   }
 
+  const handleClick = () => {
+    setTimer({startTime: null, endTime: null});
+    setQuote('');
+    setActive(!active);
+  }
+
   return (
     <div className="text-container">
       {!timer.endTime ? (
         <Text quote={quote} timer={timer} onFinish={(handleOnFinish)}/>
         ) : (
-          <DisplayResults scores={scores} quote={quote} timer={timer}/>
+          <>
+            <DisplayResults scores={scores} quote={quote} timer={timer}/>
+            <button onClick={() => handleClick()}>RETRY</button>
+          </>
         )}
     </div>
   )
