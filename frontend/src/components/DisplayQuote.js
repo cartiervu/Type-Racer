@@ -1,8 +1,11 @@
 import React from 'react'
+import DisplayWordsRemaining from './DisplayWordsRemaining';
 
 function getCorrectUserText(quote, userText) {
   for (let i = 0; i < quote.length; i++) {
     if (quote.charAt(i) !== userText.charAt(i)) {
+      // return userText.slice(0, i);
+      console.log(userText.slice(0, i).split(' '));
       return userText.slice(0, i);
     }
   }
@@ -42,10 +45,13 @@ const DisplayText = ({ cName, text, containsCursor = false}) => {
 
 export default function DisplayQuote({ quote, userText }) {
   return (
-    <div className="text-staging">    
-      <DisplayText cName='quote-correct' text={getCorrectUserText(quote, userText)}/>
-      <DisplayText cName='quote-mistake' text={getIncorrectUserText(quote, userText)}/>
-      <DisplayText cName='quote-todo' text={getRemainingQuote(quote, userText)} containsCursor={true}/>
-    </div>
+    <>
+      <DisplayWordsRemaining wordsComplete={getCorrectUserText(quote, userText).split(' ').length - 1} totalWords={quote.split(' ').length}/>
+      <div className="text-staging">    
+        <DisplayText cName='quote-correct' text={getCorrectUserText(quote, userText)}/>
+        <DisplayText cName='quote-mistake' text={getIncorrectUserText(quote, userText)}/>
+        <DisplayText cName='quote-todo' text={getRemainingQuote(quote, userText)} containsCursor={true}/>
+      </div>
+    </>
   )
 }

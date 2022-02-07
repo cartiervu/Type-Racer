@@ -4,6 +4,8 @@ import mongoService from './services/mongo'
 import Text from './components/UserText';
 import DisplayResults from './components/DisplayResults'
 
+var _ = require('lodash');
+
 async function getRandomWikiPage() {
   const endpoint = `https://simple.wikipedia.org/w/api.php?format=json&origin=*&action=query&generator=random&grnnamespace=0&prop=revisions%7Cimages&rvprop=content&grnlimit=25`
   const response = await fetch(endpoint);
@@ -38,7 +40,7 @@ async function searchWikipedia(id) {
   return json.query.pages[id].extract;
 }
 
-export default function App() {
+export default function App({ words }) {
   const [quote, setQuote] = useState('');
   const [timer, setTimer] = useState({
     startTime: null,
@@ -50,8 +52,10 @@ export default function App() {
 
   // Wikipedia API - get description from wikipedia
   useEffect(() => {
-    getRandomWikiPage()
-      .then(response => setQuote(response))
+    // getRandomWikiPage()
+    //   .then(response => setQuote(response))
+    const shuffledWord = _.shuffle(words.slice(0, 100));
+    setQuote((shuffledWord.slice(0, 25)).join(' '));
   }, [active]);
 
   // MongoDB API - get scores from DB

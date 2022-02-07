@@ -13,7 +13,6 @@ export default function UserText({ quote, timer, onFinish }) {
         onFinish();
       }
     }
-
     
     return (
       <>
