@@ -7,8 +7,8 @@ const Userscores = require('./models/userscores.js')
 const app = express()
 
 app.use(express.json())                // Middleware: read JSON content requests
-app.use(express.static('build'))    // Middleware: Show the React frontend - Check if the build directory contains a file corresponding to the request's address
-app.use(cors())                     // Middleware: Communicate between 3000 and 3001
+// app.use(express.static('build'))    // Middleware: Show the React frontend - Check if the build directory contains a file corresponding to the request's address
+// app.use(cors())                     // Middleware: Communicate between 3000 and 3001
 
 // Middleware: Log http requests
 morgan.token('body', (req, res) => JSON.stringify(req.body));
@@ -21,10 +21,9 @@ app.get('/', (request, response) => {
 
 // Get all userscores in MongoDB as JSON
 app.get('/api/userscores', (request, response) => {
-    Userscores.find({}).sort('rank')
-        .then(userscore => {
-            response.json(userscore)
-        })
+    Userscores.find({}).then(userscore => {
+        response.json(userscore)
+    })
 })
 
 // Get specific userscore
@@ -58,23 +57,18 @@ app.post('/api/userscores', (request, response) => {
     const body = request.body
     
     // Content missing from post request
-    if(!body.username || !body.wpm) {
+    if(!body.name || !body.score) {
         return (response.status(400).json({error: 'content missing'}))
     }
 
     const newScore = new Userscores({
-        username: body.username,
-        wpm: body.wpm,
-        rank: body.rank
+        name: body.name,
+        score: body.score
     })
 
-    newScore.save()
-        .then(savedScore => {
-            response.json(savedScore)
-        })
-        .catch(error => {
-            response.status(400).json({error: 'could not post'})
-        })
+    newScore.save().then(savedScore => {
+        response.json(savedScore)
+    })
 
 })
 
@@ -84,15 +78,14 @@ app.put('/api/userscores/:id', (request, response) => {
     const body = request.body;
 
     // Score missing from put request
-    if(!body.username || !body.wpm) {
+    if(!body.name || !body.score) {
         return (response.status(400).json({error: 'content missing'}))
     }
 
     const score = new Userscores({
         _id,
-        username: body.username,
-        wpm: body.wpm,
-        rank: body.rank
+        name: body.name,
+        score: body.score
     })
 
     Userscores.findByIdAndUpdate(_id, score)

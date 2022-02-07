@@ -1,1 +1,7 @@
-GET http://localhost:3001/api/userscores
+POST http://localhost:3001/api/userscores/
+Content-Type: application/json
+
+{
+    "name": "bvu",
+    "score": 123
+}
