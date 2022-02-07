@@ -1,0 +1,1 @@
+DELETE http://localhost:3001/api/userscores/62005e8cad6a6a4b9a497d07
