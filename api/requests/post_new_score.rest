@@ -2,6 +2,7 @@ POST http://localhost:3001/api/userscores/
 Content-Type: application/json
 
 {
-    "name": "cvu",
-    "score": 321    
+    "username": "bvu",
+    "wpm": 111,
+    "rank": 2
 }

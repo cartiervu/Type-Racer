@@ -1,7 +1,7 @@
-PUT http://localhost:3001/api/userscores/62006050ad6a6a4b9a497d09
+PUT http://localhost:3001/api/userscores/62006bf8ad92bd7f39b259ca
 Content-Type: application/json
 
 {
-    "name": "cvu",
-    "score": 777
+    "username": "cvu",
+    "wpm": 188
 }

@@ -1,12 +1,15 @@
 import React from 'react'
 
+function addToDatabase() {
+  console.log("adding to database...")
+}
+
 function computeWPM(quote, timer) {
   const words = (quote.split(' ')).length;
   const timeElapsed = (timer.endTime - timer.startTime) / 60000;
 
   return (words / timeElapsed).toFixed(1);
 }
-
 
 const DisplayLeaderboard = ({ scores }) => {
   return (

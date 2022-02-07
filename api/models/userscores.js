@@ -13,8 +13,9 @@ mongoose.connect(url)
     })
 
 const userscoresSchema = new mongoose.Schema({
-    name: String,
-    score: Number
+    username: { type:  String , required : true },
+    wpm: { type:  Number , required : true },
+    rank: { type: Number, unique: true, required: true, dropDups: true }
 })
 
 userscoresSchema.set('toJSON', {

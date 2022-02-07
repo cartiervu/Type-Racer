@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+import mongoService from './services/mongo'
+
 import Text from './components/UserText';
 import DisplayResults from './components/DisplayResults'
 
@@ -36,19 +38,30 @@ async function searchWikipedia(id) {
   return json.query.pages[id].extract;
 }
 
-export default function App({ scores }) {
+export default function App() {
   const [quote, setQuote] = useState('');
   const [timer, setTimer] = useState({
     startTime: null,
     endTime: null
   });
   const [active, setActive] = useState(true);
+  const [scores, setScores] = useState('');
   
 
+  // Wikipedia API - get description from wikipedia
   useEffect(() => {
     getRandomWikiPage()
       .then(response => setQuote(response))
   }, [active]);
+
+  // MongoDB API - get scores from DB
+  useEffect(() => {
+    mongoService
+    .getAll()
+    .then(initialScores => {
+      setScores(initialScores)
+    })
+  }, [])
 
   const handleOnFinish = () => {
     const newTimer = {
