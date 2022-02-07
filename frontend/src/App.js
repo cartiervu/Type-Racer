@@ -40,15 +40,22 @@ async function searchWikipedia(id) {
   return json.query.pages[id].extract;
 }
 
+<<<<<<< Updated upstream
 export default function App({ words }) {
+=======
+export default function App({ scores, words }) {
+>>>>>>> Stashed changes
   const [quote, setQuote] = useState('');
   const [timer, setTimer] = useState({
     startTime: null,
     endTime: null
   });
   const [active, setActive] = useState(true);
+<<<<<<< Updated upstream
   const [scores, setScores] = useState('');
   
+=======
+>>>>>>> Stashed changes
 
   // Wikipedia API - get description from wikipedia
   useEffect(() => {
