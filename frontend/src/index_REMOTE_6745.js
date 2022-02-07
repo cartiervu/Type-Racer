@@ -2,6 +2,24 @@ import ReactDOM from 'react-dom'
 import App from './App'
 import './index.css'
 
+const scores = [
+  {
+    "id": 1,
+    "username": "Alphari",
+    "wpm": 120
+  },
+  {
+    "id": 2,
+    "username": "Blaber",
+    "wpm": 83
+  },
+  {
+    "id": 3,
+    "username": "Perkz",
+    "wpm": 42
+  }
+]
+
 const words = [
   "the",
 "and",
@@ -4325,6 +4343,6 @@ const words = [
 ]
 
 ReactDOM.render(
-  <App words={words} />,
+  <App scores={scores} words={words} />,
   document.getElementById('root')
 )
