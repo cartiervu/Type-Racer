@@ -55,7 +55,7 @@ export default function App({ words }) {
     // getRandomWikiPage()
     //   .then(response => setQuote(response))
     const shuffledWord = _.shuffle(words.slice(0, 100));
-    setQuote((shuffledWord.slice(0, 25)).join(' '));
+    setQuote((shuffledWord.slice(0, 3)).join(' '));
   }, [active]);
 
   // MongoDB API - get scores from DB
@@ -65,7 +65,7 @@ export default function App({ words }) {
     .then(initialScores => {
       setScores(initialScores)
     })
-  }, [])
+  }, [active])
 
   const handleOnFinish = () => {
     const newTimer = {
@@ -83,11 +83,13 @@ export default function App({ words }) {
 
   return (
     <div className="text-container">
-      {!timer.endTime ? (
+      {!timer.endTime 
+      ? (
         <Text quote={quote} timer={timer} onFinish={(handleOnFinish)}/>
-        ) : (
+        ) 
+      : (
           <>
-            <DisplayResults scores={scores} quote={quote} timer={timer}/>
+            <DisplayResults scores={scores} quote={quote} timer={timer} api={mongoService}/>
             <button onClick={() => handleClick()}>RETRY</button>
           </>
         )}

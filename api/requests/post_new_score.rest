@@ -3,5 +3,5 @@ Content-Type: application/json
 
 {
     "username": "vvu",
-    "wpm": 110
+    "wpm": 200
 }
