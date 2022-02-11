@@ -12,10 +12,10 @@ mongoose.connect(url)
         console.log ('... error connecting to MongoDB:', error.message)
     })
 
+// Schema in Mongo DB
 const userscoresSchema = new mongoose.Schema({
     username: { type:  String , required : true },
-    wpm: { type:  Number , required : true },
-    rank: { type: Number, unique: true, required: true, dropDups: true }
+    wpm: { type:  Number , required : true }
 })
 
 userscoresSchema.set('toJSON', {
@@ -25,5 +25,7 @@ userscoresSchema.set('toJSON', {
         delete returnedObject.__v
     }
 })
+
+
 
 module.exports = mongoose.model('Userscore', userscoresSchema)

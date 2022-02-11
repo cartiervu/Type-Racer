@@ -5,7 +5,7 @@ function getCorrectUserText(quote, userText) {
   for (let i = 0; i < quote.length; i++) {
     if (quote.charAt(i) !== userText.charAt(i)) {
       // return userText.slice(0, i);
-      console.log(userText.slice(0, i).split(' '));
+      // console.log(userText.slice(0, i).split(' '));
       return userText.slice(0, i);
     }
   }
