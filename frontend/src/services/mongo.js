@@ -12,14 +12,19 @@ const create = newObject => {
     return request.then(response => response.data)
 }
 
-const update = (id, newObject) => {
-    const request = axios.put(`${baseUrl}/${id}`, newObject)
+// const updateIndividualScore = (id, newObject) => {
+//     const request = axios.put(`${baseUrl}/${id}`, newObject)
+//     return request.then(response => response.data)
+// }
+
+// const deleteIndividualScore = (id) => {
+//     const request = axios.delete(`${baseUrl}/${id}`)
+//     return request.then(response => response.status)
+// }
+
+const pruneDatabase = () => {
+    const request = axios.delete(baseUrl)
     return request.then(response => response.data)
-}
+} 
 
-const deleteScore = (id) => {
-    const request = axios.delete(`${baseUrl}/${id}`)
-    return request.then(response => response.status)
-}
-
-export default {getAll, create, update, deleteScore}
+export default {getAll, create, updateIndividualScore, deleteIndividualScore, pruneDatabase}

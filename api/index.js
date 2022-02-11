@@ -21,7 +21,7 @@ app.get('/', (request, response) => {
 
 // Get all userscores in MongoDB as JSON
 app.get('/api/userscores', (request, response) => {
-    Userscores.find({}).sort('rank')
+    Userscores.find({}).sort({ wpm : 'descending'})
         .then(userscore => {
             response.json(userscore)
         })
@@ -53,6 +53,48 @@ app.delete('/api/userscores/:id', (request, response) => {
         )
 })
 
+// Prune the database - keep only the top ten scores
+app.delete('/api/userscores', (request, response) => {
+
+    Userscores.countDocuments({})
+        .then(result => {
+            // More than 10 results
+            if (result > 10) {
+
+                let idsToDelete = new Array();
+
+                // Get these bottom results
+                Userscores.find({}).sort({ wpm : 'ascending'}).limit(result - 10)
+                .then(result => {
+                        // Put into an array
+                        result.map(user =>{
+                            idsToDelete.push(user._id.toString());
+                        })
+
+                        // Delete ids
+                        Userscores.deleteMany({_id: { $in: idsToDelete}})
+                            .then(result => {
+                                response.status(204).end() // Success, no content
+                            })
+                            .catch(error => 
+                                response.status(400).json({error: 'could not prune database'})
+                            )
+                    }
+                )
+                .catch(err => {
+                    response.status(400).json({error: 'could not prune database'})
+                })
+
+            } else {
+                response.status(204).end() // Success, no content
+            }
+        })
+        .catch(error => {
+            response.status(400).json({error: 'could not prune database'})
+        })
+    
+})
+
 // Post a new score
 app.post('/api/userscores', (request, response) => {
     const body = request.body
@@ -64,8 +106,7 @@ app.post('/api/userscores', (request, response) => {
 
     const newScore = new Userscores({
         username: body.username,
-        wpm: body.wpm,
-        rank: body.rank
+        wpm: body.wpm
     })
 
     newScore.save()
@@ -78,7 +119,7 @@ app.post('/api/userscores', (request, response) => {
 
 })
 
-// Update a score
+// Update a specific score score
 app.put('/api/userscores/:id', (request, response) => {
     const {id: _id} = request.params;
     const body = request.body;
@@ -91,8 +132,7 @@ app.put('/api/userscores/:id', (request, response) => {
     const score = new Userscores({
         _id,
         username: body.username,
-        wpm: body.wpm,
-        rank: body.rank
+        wpm: body.wpm
     })
 
     Userscores.findByIdAndUpdate(_id, score)
