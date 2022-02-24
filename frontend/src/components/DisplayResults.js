@@ -1,9 +1,7 @@
 import React from 'react'
+import { useState } from 'react';
 
-function addToDatabase() {
-  console.log("adding to database...")
-}
-
+// Return the WPM from the active user
 function computeWPM(quote, timer) {
   const words = (quote.split(' ')).length;
   const timeElapsed = (timer.endTime - timer.startTime) / 60000;
@@ -119,11 +117,15 @@ const DisplayLeaderboard = ({ scores, wpm, api }) => {
         <div className='username'>Name</div>
         <div className='wpm'>WPM</div>
       </div>
-      {scores.map(score => (
+      {temp.map((score, index) => (
         <div key={score.id}>
           <div className='player-score-container'>
-            <div className='username'>{score.username}</div>
-            <div className='wpm'>{score.wpm}</div>
+            {rank >= 10 && index === rank
+              ? <></>
+              : (index === rank
+                  ? <ActiveScore wpm={score.wpm} api={api}/>
+                  : <RegularScore username={score.username} wpm={score.wpm}/>
+              )}
           </div>
         </div>
       ))}
@@ -131,13 +133,16 @@ const DisplayLeaderboard = ({ scores, wpm, api }) => {
   )
 }
 
-export default function DisplayResults({ scores, quote, timer }) {
+export default function DisplayResults({ scores, quoteObj, timeSplits, timer, api }) {
+
+  const wpm = computeWPM(quoteObj.array.join(""), timer);
+
   return (
     <div className='results'>
-      <DisplayLeaderboard scores={scores} />
+      <DisplayLeaderboard scores={scores} wpm={wpm} api={api}/>
       <hr/>
       <div className='wpm'>
-        Words Per Minute: {computeWPM(quote, timer)}
+        Words Per Minute: {wpm}
       </div>
     </div>
   )

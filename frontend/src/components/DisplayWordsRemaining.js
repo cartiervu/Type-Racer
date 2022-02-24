@@ -2,7 +2,7 @@ import React from 'react'
 
 export default function DisplayWordsRemaining({ wordsComplete, totalWords }) {
   return (
-    <div className="words-remaining-container">
+    <div className="counter">
       {wordsComplete}/{totalWords}
     </div>
   )

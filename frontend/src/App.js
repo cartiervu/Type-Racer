@@ -49,23 +49,23 @@ export default function App({ words }) {
   });
   const [active, setActive] = useState(true);
   const [scores, setScores] = useState('');
+  const [mode, setMode] = useState({type: 'words', length: 15});
+  const [isStarted, setIsStarted] = useState({start: null});
   
   // Wikipedia API - get description from wikipedia
   useEffect(() => {
     // getRandomWikiPage()
     //   .then(response => setQuoteObj(response))
+    setTimer({startTime: null, endTime: null});
     const shuffledWord = _.shuffle(words.slice(0, 100));
-<<<<<<< HEAD
     const newQuote = {
-      array: (shuffledWord.slice(0, 10)).map(word => word + " "),
+      array: (shuffledWord.slice(0, mode.length)).map(word => word + " "),
       currIndex: 0
     };
     newQuote.array[newQuote.array.length - 1] = newQuote.array[newQuote.array.length - 1].trim();
     setQuoteObj(newQuote);
-=======
-    setQuote((shuffledWord.slice(0, 2)).join(' '));
->>>>>>> 3dc2a66886760c985db747c8d3fd740c56beaf0d
-  }, [active]);
+    document.getElementById("text-area").focus();
+  }, [active, mode]);
 
   // MongoDB API - get scores from DB
   useEffect(() => {
@@ -85,23 +85,36 @@ export default function App({ words }) {
   }
 
   const handleRetryButton = () => {
+    setIsStarted({start: false});
     setTimer({startTime: null, endTime: null});
-    setQuoteObj({array: [], currIndex: 0});
+    setQuoteObj({array: [""], currIndex: 0});
     setActive(!active);
   }
 
+  const handleModeChange = (type, length) => {
+    setIsStarted({start: false});
+    setMode({type: type, length: length});
+  }
+
   return (
-    <div className="text-container">
-      {!timer.endTime 
-      ? (
-        <Text quoteObj={quoteObj} timer={timer} timeSplits={timeSplits} onFinish={(handleOnFinish)}/>
-        ) 
-      : (
-          <>
-            <DisplayResults scores={scores} quoteObj={quoteObj} timeSplits={timeSplits} timer={timer} api={mongoService}/>
-            <button onClick={() => handleRetryButton()}>RETRY</button>
-          </>
-        )}
-    </div>
+    <>
+      <button onClick={() => handleModeChange('words', 15)}>Words 15</button>
+      <button onClick={() => handleModeChange('words', 30)}>Words 30</button>
+      <button onClick={() => handleModeChange('words', 45)}>Words 45</button>
+      <button onClick={() => handleModeChange('words', 60)}>Words 60</button>
+      <button onClick={() => handleModeChange('time', 15)}>Time 15</button>
+      <div className="text-container">
+        {!timer.endTime 
+        ? (
+            <Text quoteObj={quoteObj} timer={timer} timeSplits={timeSplits} onFinish={(handleOnFinish)} isStarted={isStarted}/>
+          ) 
+        : (
+            <>
+              <DisplayResults scores={scores} quoteObj={quoteObj} timeSplits={timeSplits} timer={timer} api={mongoService}/>
+              <button onClick={() => handleRetryButton()}>RETRY</button>
+            </>
+          )}
+      </div>
+    </>
   )
 }
