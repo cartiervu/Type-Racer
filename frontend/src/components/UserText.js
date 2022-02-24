@@ -18,7 +18,7 @@ export default function UserText({ quote, timer, onFinish }) {
       <>
         <DisplayQuote quote={quote} userText={userText}/>
         <div id="text-box">
-          <input disabled={disabled} onChange={handleKeyPress} style={{width: "500px"}} autoFocus />
+          <textarea disabled={disabled} onChange={handleKeyPress} autoFocus />
         </div>
       </>
     )

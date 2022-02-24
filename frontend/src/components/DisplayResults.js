@@ -26,7 +26,7 @@ function findRank(scores, newScore) {
 
 const ActiveScore = ({wpm, api}) => {
 
-  const [username, setUsername] = useState("(your name here)");
+  const [username, setUsername] = useState("");
   const [submitted, setSubmitted] = useState(false)
 
   // As user types update the input box
@@ -72,7 +72,8 @@ const ActiveScore = ({wpm, api}) => {
           <label>
             <input autoFocus
               value={username}
-              onChange = {onChange} />
+              onChange = {onChange}
+              maxLength="10" />
           </label>
         </form>
       </div>

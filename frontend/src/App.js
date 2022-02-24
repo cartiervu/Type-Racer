@@ -55,7 +55,7 @@ export default function App({ words }) {
     // getRandomWikiPage()
     //   .then(response => setQuote(response))
     const shuffledWord = _.shuffle(words.slice(0, 100));
-    setQuote((shuffledWord.slice(0, 3)).join(' '));
+    setQuote((shuffledWord.slice(0, 2)).join(' '));
   }, [active]);
 
   // MongoDB API - get scores from DB
