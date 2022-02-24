@@ -41,7 +41,8 @@ async function searchWikipedia(id) {
 }
 
 export default function App({ words }) {
-  const [quote, setQuote] = useState('');
+  const [quoteObj, setQuoteObj] = useState({array: [""], currIndex: 0});
+  const [timeSplits, setTimeSplits] = useState([]);
   const [timer, setTimer] = useState({
     startTime: null,
     endTime: null
@@ -49,13 +50,17 @@ export default function App({ words }) {
   const [active, setActive] = useState(true);
   const [scores, setScores] = useState('');
   
-
   // Wikipedia API - get description from wikipedia
   useEffect(() => {
     // getRandomWikiPage()
-    //   .then(response => setQuote(response))
+    //   .then(response => setQuoteObj(response))
     const shuffledWord = _.shuffle(words.slice(0, 100));
-    setQuote((shuffledWord.slice(0, 3)).join(' '));
+    const newQuote = {
+      array: (shuffledWord.slice(0, 10)).map(word => word + " "),
+      currIndex: 0
+    };
+    newQuote.array[newQuote.array.length - 1] = newQuote.array[newQuote.array.length - 1].trim();
+    setQuoteObj(newQuote);
   }, [active]);
 
   // MongoDB API - get scores from DB
@@ -75,9 +80,9 @@ export default function App({ words }) {
     setTimer(newTimer);
   }
 
-  const handleClick = () => {
+  const handleRetryButton = () => {
     setTimer({startTime: null, endTime: null});
-    setQuote('');
+    setQuoteObj({array: [], currIndex: 0});
     setActive(!active);
   }
 
@@ -85,12 +90,12 @@ export default function App({ words }) {
     <div className="text-container">
       {!timer.endTime 
       ? (
-        <Text quote={quote} timer={timer} onFinish={(handleOnFinish)}/>
+        <Text quoteObj={quoteObj} timer={timer} timeSplits={timeSplits} onFinish={(handleOnFinish)}/>
         ) 
       : (
           <>
-            <DisplayResults scores={scores} quote={quote} timer={timer} api={mongoService}/>
-            <button onClick={() => handleClick()}>RETRY</button>
+            <DisplayResults scores={scores} quoteObj={quoteObj} timeSplits={timeSplits} timer={timer} api={mongoService}/>
+            <button onClick={() => handleRetryButton()}>RETRY</button>
           </>
         )}
     </div>
