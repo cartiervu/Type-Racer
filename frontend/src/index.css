@@ -38,12 +38,28 @@ flex-direction: column;
 justify-content: center;
 
 /* Items to the middle */
+position: relative;
 align-items: center;
 min-height: 90vh;
 }
 
-#text-box {
+#text-overlay-class, textarea {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 10vh;
+  left: -10vh;
+  /* margin-left: auto; */
+  /* margin-right: auto; */
+}
+
+textarea {
     opacity: 0;
+
+    width: 110vh;
+    height: 80vh;
+
+    z-index: 9;
 }
 
 .leaderboard {
@@ -64,13 +80,12 @@ min-height: 90vh;
 }
 
 .player-active-score {
-  color:purple;
+  color:rgb(177, 47, 112);
   }
 
 input {
-  color:purple;
-  /* border: 2px solid purple; */
-  /* border-radius: 4px; */
+  color:rgb(177, 47, 112);
+  font-family: 'Roboto Mono', monospace;
   border: none;
   font-size: 1em;
   width: 75%;
