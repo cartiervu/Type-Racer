@@ -55,12 +55,16 @@ export default function App({ words }) {
     // getRandomWikiPage()
     //   .then(response => setQuoteObj(response))
     const shuffledWord = _.shuffle(words.slice(0, 100));
+<<<<<<< HEAD
     const newQuote = {
       array: (shuffledWord.slice(0, 10)).map(word => word + " "),
       currIndex: 0
     };
     newQuote.array[newQuote.array.length - 1] = newQuote.array[newQuote.array.length - 1].trim();
     setQuoteObj(newQuote);
+=======
+    setQuote((shuffledWord.slice(0, 2)).join(' '));
+>>>>>>> 3dc2a66886760c985db747c8d3fd740c56beaf0d
   }, [active]);
 
   // MongoDB API - get scores from DB
