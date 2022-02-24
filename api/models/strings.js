@@ -1,10 +1,10 @@
 const mongoose = require('mongoose')
 
-const url = process.env.MONGODB_URI_SCORES
+const url = process.env.MONGODB_URI_STRINGS
 
 console.log('connecting to', url)
 
-var conn1 = mongoose.createConnection(url);
+var conn2 = mongoose.createConnection(url);
     // .then(result => {
     //     console.log('... successfully connected')
     // })
@@ -13,12 +13,11 @@ var conn1 = mongoose.createConnection(url);
     // })
 
 // Schema in Mongo DB
-const userscoresSchema = new mongoose.Schema({
-    username: { type:  String , required : true },
-    wpm: { type:  Number , required : true }
-})
+const stringsSchema = new mongoose.Schema(
+    { Articles: { type:  String , required : true }},
+    { collection : 'wikipedia-articles'})
 
-userscoresSchema.set('toJSON', {
+stringsSchema.set('toJSON', {
     transform: (document, returnedObject) => {
         returnedObject.id = returnedObject._id.toString()
         delete returnedObject._id
@@ -28,4 +27,4 @@ userscoresSchema.set('toJSON', {
 
 
 
-module.exports = conn1.model('Userscore', userscoresSchema)
+module.exports = conn2.model('Strings', stringsSchema)
