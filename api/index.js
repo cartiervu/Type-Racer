@@ -3,6 +3,7 @@ const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
 const Userscores = require('./models/userscores.js')
+const Strings = require('./models/strings.js')
 
 const app = express()
 
@@ -39,6 +40,16 @@ app.get('/api/userscores/:id', (request, response) => {
         })
         .catch (error => {
             response.status(400).send({ error: 'malformatted id '}) // Invalid id
+        })
+})
+
+// Get a random quote
+app.get('/api/strings', (request, response) => {
+    Strings.aggregate([{ $sample: { size: 1 } }])
+    // Strings.find({})
+        .then(quote => {
+            console.log(quote)
+            response.json(quote)
         })
 })
 
