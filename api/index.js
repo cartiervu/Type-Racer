@@ -4,6 +4,7 @@ const morgan = require('morgan')
 const cors = require('cors')
 const Userscores = require('./models/userscores.js')
 const Strings = require('./models/strings.js')
+const Words = require('./models/words.js')
 
 const app = express()
 
@@ -53,6 +54,15 @@ app.get('/api/strings', (request, response) => {
         })
 })
 
+// Get random words
+app.get('/api/words/:num_words', (request, response) => {
+    Words.aggregate([{ $sample: { size: Number(request.params.num_words) } }])
+        .then(word => {
+            console.log(word)
+            response.json(word)
+        })
+})
+
 // Delete a specific userscore
 app.delete('/api/userscores/:id', (request, response) => {
     Userscores.findByIdAndDelete(request.params.id)
@@ -64,7 +74,7 @@ app.delete('/api/userscores/:id', (request, response) => {
         )
 })
 
-// Prune the database - keep only the top ten scores
+// Prune the userscores database - keep only the top ten scores
 app.delete('/api/userscores', (request, response) => {
 
     Userscores.countDocuments({})
