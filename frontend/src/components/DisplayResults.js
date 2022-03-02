@@ -51,10 +51,12 @@ const ActiveScore = ({wpm, api}) => {
 
 
     // Create new record
-    api.create(newScore)
+    api
+    .createScore(newScore)
       .then(result => {
         // Prune database
-        api.pruneDatabase()
+        api
+        .pruneDatabase()
         .then(setSubmitted(true))
         .catch(error => console.log("uh-oh"))
       })
@@ -107,7 +109,7 @@ const DisplayLeaderboard = ({ scores, wpm, api }) => {
   const rank = findRank(temp, newScore);
   temp.splice(rank, 0, newScore)
 
-  console.log(rank)
+  // console.log(rank)
 
   // If rank is greater than 10, do not allow the user the option to enter their score
     // Otherwise, do allow the user the option to enter their score

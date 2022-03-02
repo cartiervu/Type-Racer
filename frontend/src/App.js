@@ -6,41 +6,7 @@ import DisplayResults from './components/DisplayResults'
 
 var _ = require('lodash');
 
-async function getRandomWikiPage() {
-  const endpoint = `https://simple.wikipedia.org/w/api.php?format=json&origin=*&action=query&generator=random&grnnamespace=0&prop=revisions%7Cimages&rvprop=content&grnlimit=25`
-  const response = await fetch(endpoint);
-  
-  if (!response.ok) {
-    throw Error(response.statusText);
-  }
-  
-  const json = await response.json();
-  const pages = json.query.pages;
-
-  for (const pageid in pages) {
-      let result = await searchWikipedia(pageid);
-      result = result.replace(/[^\x00-\x7F]/g, "");
-      result = result.replace("  ", " ")
-      
-      if (result.length > 25 && result.length < 100) {
-          return result;
-      }
-      // return result;
-  }
-}
-
-async function searchWikipedia(id) {
-  const endpoint = `https://simple.wikipedia.org/w/api.php?format=json&origin=*&action=query&prop=extracts&exintro&explaintext&redirects=1&pageids=${id}`;
-  const response = await fetch(endpoint);
-  if (!response.ok) {
-      throw Error(response.statusText);
-  }
-  const json = await response.json();
-
-  return json.query.pages[id].extract;
-}
-
-export default function App({ words }) {
+export default function App() {
   const [quoteObj, setQuoteObj] = useState({array: [""], currIndex: 0});
   const [timeSplits, setTimeSplits] = useState([]);
   const [timer, setTimer] = useState({
@@ -48,33 +14,39 @@ export default function App({ words }) {
     endTime: null
   });
   const [active, setActive] = useState(true);
-  const [scores, setScores] = useState('');
-  const [mode, setMode] = useState({type: 'words', length: 15});
+  const [scores, setScores] = useState([]);
+  const [mode, setMode] = useState({type: 'words', length: 3});
   const [isStarted, setIsStarted] = useState({start: null});
   
-  // Wikipedia API - get description from wikipedia
+ 
   useEffect(() => {
-    // getRandomWikiPage()
-    //   .then(response => setQuoteObj(response))
-    setTimer({startTime: null, endTime: null});
-    const shuffledWord = _.shuffle(words.slice(0, 100));
-    const newQuote = {
-      array: (shuffledWord.slice(0, mode.length)).map(word => word + " "),
-      currIndex: 0
-    };
-    newQuote.array[newQuote.array.length - 1] = newQuote.array[newQuote.array.length - 1].trim();
-    setQuoteObj(newQuote);
-    document.getElementById("text-area").focus();
-  }, [active, mode]);
-
-  // MongoDB API - get scores from DB
-  useEffect(() => {
+    // Get 15 words to start from the database
     mongoService
-    .getAll()
+    .getWords(mode.length)
+    .then(initialWords => {
+      console.log(initialWords)
+      setTimer({startTime: null, endTime: null});
+
+      const newQuote = {
+        array: initialWords.map(word => word + " "),
+        currIndex: 0
+      };
+      
+      newQuote.array[newQuote.array.length - 1] = newQuote.array[newQuote.array.length - 1].trim();
+      setQuoteObj(newQuote);
+      document.getElementById("text-area").focus();
+    })
+
+    // Get scores from DB
+    mongoService
+    .getAllScores()
     .then(initialScores => {
       setScores(initialScores)
     })
-  }, [active])
+
+
+    
+  }, [active, mode]);
 
   const handleOnFinish = () => {
     const newTimer = {
@@ -96,10 +68,12 @@ export default function App({ words }) {
     setMode({type: type, length: length});
   }
 
+  console.log("quoteObj: ",quoteObj)
+
   return (
     <>
-      <button onClick={() => handleModeChange('words', 15)}>Words 15</button>
-      <button onClick={() => handleModeChange('words', 30)}>Words 30</button>
+      <button onClick={() => handleModeChange('words', 3)}>Words 3</button>
+      <button onClick={() => handleModeChange('words', 5)}>Words 5</button>
       <button onClick={() => handleModeChange('words', 45)}>Words 45</button>
       <button onClick={() => handleModeChange('words', 60)}>Words 60</button>
       <button onClick={() => handleModeChange('time', 15)}>Time 15</button>

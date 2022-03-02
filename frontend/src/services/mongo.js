@@ -1,30 +1,56 @@
 import axios from 'axios'
 
-const baseUrl = "/api/userscores"
+const scoreUrl = "/api/userscores"
+const stringUrl = "/api/strings"
+const wordUrl = "/api/words"
 
-const getAll = () => {
-    const request = axios.get(baseUrl)
+
+// ******************************
+// * Userscores
+const getAllScores = () => {
+    const request = axios.get(scoreUrl)
     return request.then(response => response.data)
 }
 
-const create = newObject => {
-    const request = axios.post(baseUrl, newObject)
+const createScore = newObject => {
+    const request = axios.post(scoreUrl, newObject)
     return request.then(response => response.data)
-}
-
-const updateIndividualScore = (id, newObject) => {
-    const request = axios.put(`${baseUrl}/${id}`, newObject)
-    return request.then(response => response.data)
-}
-
-const deleteIndividualScore = (id) => {
-    const request = axios.delete(`${baseUrl}/${id}`)
-    return request.then(response => response.status)
 }
 
 const pruneDatabase = () => {
-    const request = axios.delete(baseUrl)
+    const request = axios.delete(scoreUrl)
     return request.then(response => response.data)
 } 
 
-export default {getAll, create, updateIndividualScore, deleteIndividualScore, pruneDatabase}
+// const updateIndividualScore = (id, newObject) => {
+//     const request = axios.put(`${scoreUrl}/${id}`, newObject)
+//     return request.then(response => response.data)
+// }
+
+// const deleteIndividualScore = (id) => {
+//     const request = axios.delete(`${scoreUrl}/${id}`)
+//     return request.then(response => response.status)
+// }
+
+// ******************************
+// * Quotes
+const getAQuote = () => {
+    const request = axios.get(stringUrl)
+    return request.then(response => response.data)
+}
+
+// ******************************
+// * Words
+const getWords = (num_words) => {
+    const request = axios.get(`${wordUrl}/${num_words}`)
+    return request.then(response => response.data)
+}
+
+
+export default { getAllScores,
+    createScore,
+    // updateIndividualScore,
+    // deleteIndividualScore,
+    pruneDatabase,
+    getAQuote,
+    getWords }

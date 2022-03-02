@@ -56,10 +56,15 @@ app.get('/api/strings', (request, response) => {
 
 // Get random words
 app.get('/api/words/:num_words', (request, response) => {
+
+    let wordArray = new Array();
+
     Words.aggregate([{ $sample: { size: Number(request.params.num_words) } }])
-        .then(word => {
-            console.log(word)
-            response.json(word)
+        .then(result => {
+            // response.json(result)
+            result.map(word => wordArray.push(word.Words))
+            console.log(wordArray);
+            response.json(wordArray)
         })
 })
 
@@ -112,6 +117,19 @@ app.delete('/api/userscores', (request, response) => {
         })
         .catch(error => {
             response.status(400).json({error: 'could not prune database'})
+        })
+    
+})
+
+// Remove all scores
+app.delete('/api/all_userscores', (request, response) => {
+
+    Userscores.collection.deleteMany({})
+        .then(result => {
+            response.status(204).end() // Success, no content
+        })
+        .catch(error => {
+            response.status(400).json({error: 'could not clean-up database'})
         })
     
 })
