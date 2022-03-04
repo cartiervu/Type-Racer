@@ -6,34 +6,36 @@ function getCompletedUserText(quoteObj) {
 }
 
 function getCorrectUserText(quote, userText) {
-  console.log(quote);
-  for (let i = 0; i < quote.length; i++) {
-    if (quote.charAt(i) !== userText.charAt(i)) {
-      return userText.slice(0, i);
+    for (let i = 0; i < quote.length; i++) {
+      if (quote.charAt(i) !== userText.charAt(i)) {
+        return userText.slice(0, i);
+      }
     }
-  }
-  return userText;
+    return userText;
 }
 
 function getIncorrectUserText(quote, userText) {
-  for (let i = 0; i < quote.length; i++) {
-    if (quote.charAt(i) !== userText.charAt(i)) {
-      return userText.slice(i);
+    for (let i = 0; i < quote.length; i++) {
+      if (quote.charAt(i) !== userText.charAt(i)) {
+        return userText.slice(i);
+      }
     }
-  }
-  return '';
+    return '';
+
 }
 
 function getRemainingQuoteWord(quote, userText) {
-  for (let i = 0; i < quote.length; i++) {
-    if (quote.charAt(i) !== userText.charAt(i)) {
-      return quote.slice(i);
+    for (let i = 0; i < quote.length; i++) {
+      if (quote.charAt(i) !== userText.charAt(i)) {
+        return quote.slice(i);
+      }
     }
-  }
-  return '';
+    return '';
 }
 
 function getRemainingQuote(quoteObj) {
+
+
   return quoteObj.array.slice(quoteObj.currIndex + 1).join("");
 }
 
@@ -51,15 +53,26 @@ const DisplayText = ({ cName, text, containsCursor = false}) => {
 }
 
 export default function DisplayQuote({ quoteObj, userText }) {
+
   return (
     <>
       <DisplayWordsRemaining wordsComplete={quoteObj.currIndex} totalWords={quoteObj.array.length}/>
       <div className="text-staging">
-        <DisplayText cName='quote-correct' text={getCompletedUserText(quoteObj)} />
-        <DisplayText cName='quote-correct' text={getCorrectUserText(quoteObj.array[quoteObj.currIndex], userText)} />
-        <DisplayText cName='quote-mistake' text={getIncorrectUserText(quoteObj.array[quoteObj.currIndex], userText)} />
-        <DisplayText cName='quote-todo' text={getRemainingQuoteWord(quoteObj.array[quoteObj.currIndex], userText)} containsCursor={true}/>
-        <DisplayText cName='quote-todo' text={getRemainingQuote(quoteObj)} />
+        {/*   // Because the following functions receive a parameter quote in the form quote = quoteObj.array[quoteObj.currIndex]
+              //  After we finish one quoteObj (and prior to receiving another from the API), React re-renders this component with an ArrayOutOfBoundException
+              //  This guard ensures that we are not performing functions on NULL */}
+        { quoteObj.array[quoteObj.currIndex]
+          ? (
+            <>
+            <DisplayText cName='quote-correct' text={getCompletedUserText(quoteObj)} />
+            <DisplayText cName='quote-correct' text={getCorrectUserText(quoteObj.array[quoteObj.currIndex], userText)} />
+            <DisplayText cName='quote-mistake' text={getIncorrectUserText(quoteObj.array[quoteObj.currIndex], userText)} />
+            <DisplayText cName='quote-todo' text={getRemainingQuoteWord(quoteObj.array[quoteObj.currIndex], userText)} containsCursor={true}/>
+            <DisplayText cName='quote-todo' text={getRemainingQuote(quoteObj)} />
+            </>
+          )
+          : (null)
+        }  
       </div>  
     </>
   )

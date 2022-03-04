@@ -35,12 +35,12 @@ color:black;
 }
 
 .text-container {
-width: 800px;
-margin-left:auto;
-margin-right:auto;
+width: 80vh;
+margin: auto;
 display:flex;
 flex-direction: column;
 justify-content: center;
+text-align: center;
 
 /* Items to the middle */
 position: relative;
@@ -49,19 +49,15 @@ min-height: 90vh;
 }
 
 #text-overlay-class, textarea {
-  width: 100%;
-  height: 100%;
   position: absolute;
-  top: 10vh;
-  left: -10vh;
-  /* margin-left: auto; */
-  /* margin-right: auto; */
+  top: 0vh;
+  left: 0vh;
 }
 
 textarea {
     opacity: 0;
-    width: 110vh;
-    height: 80vh;
+    width: 100%;
+    height: 100%;
     z-index: 9;
 }
 
@@ -91,5 +87,6 @@ input {
   font-family: 'Roboto Mono', monospace;
   border: none;
   font-size: 1em;
-  width: 60%;
+  width: 25vh;
+  padding: 0;
 }

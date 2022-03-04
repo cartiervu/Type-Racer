@@ -15,7 +15,7 @@ export default function App() {
   });
   const [active, setActive] = useState(true);
   const [scores, setScores] = useState([]);
-  const [mode, setMode] = useState({type: 'words', length: 3});
+  const [mode, setMode] = useState({type: 'words', length: 2});
   const [isStarted, setIsStarted] = useState({start: null});
   
  
@@ -24,7 +24,6 @@ export default function App() {
     mongoService
     .getWords(mode.length)
     .then(initialWords => {
-      console.log(initialWords)
       setTimer({startTime: null, endTime: null});
 
       const newQuote = {
@@ -43,10 +42,9 @@ export default function App() {
     .then(initialScores => {
       setScores(initialScores)
     })
-
-
     
   }, [active, mode]);
+
 
   const handleOnFinish = () => {
     const newTimer = {
@@ -68,13 +66,11 @@ export default function App() {
     setMode({type: type, length: length});
   }
 
-  console.log("quoteObj: ",quoteObj)
-
   return (
     <>
+      <button onClick={() => handleModeChange('words', 2)}>Words </button>
       <button onClick={() => handleModeChange('words', 3)}>Words 3</button>
       <button onClick={() => handleModeChange('words', 5)}>Words 5</button>
-      <button onClick={() => handleModeChange('words', 45)}>Words 45</button>
       <button onClick={() => handleModeChange('words', 60)}>Words 60</button>
       <button onClick={() => handleModeChange('time', 15)}>Time 15</button>
       <div className="text-container">

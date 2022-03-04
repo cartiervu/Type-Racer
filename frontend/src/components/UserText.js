@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import DisplayQuote from './DisplayQuote';
 
 export default function UserText({ quoteObj, timer, timeSplits, onFinish, isStarted }) {
+
     const [userText, setUserText] = useState('');
 
     if (!isStarted.start) {
