@@ -37,12 +37,23 @@ export default function App() {
         document.getElementById("text-area").focus();
       })
 
-      // Get scores from DB
-      mongoService
-      .getWords15Scores()
-      .then(initialScores => {
-        setScores(initialScores)
-      })
+      
+      if (mode.length === 15) {
+        // Get scores from DB
+        mongoService
+        .getWords15Scores()
+        .then(initialScores => {
+          setScores(initialScores)
+        })
+      } else if (mode.length === 30) {
+        // Get scores from DB
+        mongoService
+        .getWords30Scores()
+        .then(initialScores => {
+          setScores(initialScores)
+        })
+      }
+      
     } else if (mode.type === "quote") {
       mongoService
       .getAQuote()
@@ -96,11 +107,9 @@ export default function App() {
   return (
     <>
       <div className="top-bar">
-        <button className="top-bar-button" onClick={() => handleModeChange('words', 2)}>Words 2</button>
+        <button className="top-bar-button" onClick={() => handleModeChange('words', 15)}>Words 15</button>
         <button className="top-bar-button" onClick={() => handleModeChange('words', 30)}>Words 30</button>
-        {/* <button onClick={() => handleModeChange('words', 5)}>Words 5</button> */}
         <button className="top-bar-button" onClick={() => handleModeChange('quote', 0)}>Quote</button>
-        {/* <button onClick={() => handleModeChange('words', 60)}>Words 60</button> */}
         {/* <button onClick={() => handleModeChange('time', 15)}>Time 15</button> */}
       </div>
       <div className="text-container">

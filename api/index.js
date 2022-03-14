@@ -2,7 +2,7 @@ require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
-const {WPM, Score15} = require('./models/userscores.js')
+const {WPM, Score15, Score30} = require('./models/userscores.js')
 const Strings = require('./models/strings.js')
 const Words = require('./models/words.js')
 
@@ -30,9 +30,18 @@ app.get('/api/userscores/wpm', (request, response) => {
             })
 })
 
-// Get all wpm userscores in MongoDB as JSON
+// Get all 15 word userscores in MongoDB as JSON
 app.get('/api/userscores/score15', (request, response) => {
     Score15
+    .find({}).sort({ seconds : 'ascending'})
+            .then(userscore => {
+                response.json(userscore)
+            })
+})
+
+// Get all 30 word userscores in MongoDB as JSON
+app.get('/api/userscores/score30', (request, response) => {
+    Score30
     .find({}).sort({ seconds : 'ascending'})
             .then(userscore => {
                 response.json(userscore)
@@ -181,6 +190,51 @@ app.delete('/api/userscores/score15', (request, response) => {
     
 })
 
+// Prune the score30 database - keep only the top ten scores
+app.delete('/api/userscores/score30', (request, response) => {
+
+    Score30
+    .countDocuments({})
+            .then(result => {
+                // More than 10 results
+                if (result > 10) {
+
+                    let idsToDelete = new Array();
+
+                    // Get these bottom results
+                    Score30
+                    .find({}).sort({ seconds : 'descending'}).limit(result - 10)
+                        .then(result => {
+                                // Put into an array
+                                result.map(user =>{
+                                    idsToDelete.push(user._id.toString());
+                                })
+
+                            // Delete ids
+                            Score30
+                            .deleteMany({_id: { $in: idsToDelete}})
+                                    .then(result => {
+                                        response.status(204).end() // Success, no content
+                                    })
+                                    .catch(error => 
+                                        response.status(400).json({error: 'could not prune database'})
+                                    )
+                        }
+                    )
+                    .catch(err => {
+                        response.status(400).json({error: 'could not prune database'})
+                    })
+
+                } else {
+                    response.status(204).end() // Success, no content
+                }
+            })
+            .catch(error => {
+                response.status(400).json({error: 'could not prune database'})
+            })
+    
+})
+
 // Remove all scores from the wpm database
 app.delete('/api/userscores/wpm/deleteall', (request, response) => {
 
@@ -199,6 +253,20 @@ app.delete('/api/userscores/wpm/deleteall', (request, response) => {
 app.delete('/api/userscores/score15/deleteall', (request, response) => {
 
     Score15
+    .collection.deleteMany({})
+            .then(result => {
+                response.status(204).end() // Success, no content
+            })
+            .catch(error => {
+                response.status(400).json({error: 'could not clean-up database'})
+            })
+    
+})
+
+// Remove all scores from the score30 database
+app.delete('/api/userscores/score30/deleteall', (request, response) => {
+
+    Score30
     .collection.deleteMany({})
             .then(result => {
                 response.status(204).end() // Success, no content
@@ -243,6 +311,30 @@ app.post('/api/userscores/score15', (request, response) => {
     }
 
     const newScore = new Score15({
+            username: body.username,
+            seconds: body.seconds
+        })
+
+    newScore.save()
+        .then(savedScore => {
+            response.json(savedScore)
+        })
+        .catch(error => {
+            response.status(400).json({error: 'could not post'})
+        })
+
+})
+
+// Post a new score to the score30 database
+app.post('/api/userscores/score30', (request, response) => {
+    const body = request.body
+    
+    // Content missing from post request
+    if(!body.username || !body.seconds) {
+        return (response.status(400).json({error: 'content missing'}))
+    }
+
+    const newScore = new Score30({
             username: body.username,
             seconds: body.seconds
         })

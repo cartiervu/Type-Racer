@@ -2,6 +2,7 @@ import axios from 'axios'
 
 const wpmScoreUrl = "/api/userscores/wpm"
 const words15ScoreUrl = "api/userscores/score15"
+const words30ScoreUrl = "api/userscores/score30"
 const stringUrl = "/api/strings"
 const wordUrl = "/api/words"
 
@@ -18,6 +19,11 @@ const getWords15Scores = () => {
     return request.then(response => response.data)
 }
 
+const getWords30Scores = () => {
+    const request = axios.get(words30ScoreUrl)
+    return request.then(response => response.data)
+}
+
 const createWPMScore = newObject => {
     const request = axios.post(wpmScoreUrl, newObject)
     return request.then(response => response.data)
@@ -25,6 +31,11 @@ const createWPMScore = newObject => {
 
 const createWords15Score = newObject => {
     const request = axios.post(words15ScoreUrl, newObject)
+    return request.then(response => response.data)
+}
+
+const createWords30Score = newObject => {
+    const request = axios.post(words30ScoreUrl, newObject)
     return request.then(response => response.data)
 }
 
@@ -36,6 +47,11 @@ const pruneWPMDatabase = () => {
 
 const pruneWords15Database = () => {
     const request = axios.delete(words15ScoreUrl)
+    return request.then(response => response.data)
+} 
+
+const pruneWords30Database = () => {
+    const request = axios.delete(words30ScoreUrl)
     return request.then(response => response.data)
 } 
 
@@ -66,9 +82,12 @@ const getWords = (num_words) => {
 
 export default { getWPMScores,
     getWords15Scores,
+    getWords30Scores,
     createWPMScore,
     createWords15Score,
+    createWords30Score,
     pruneWPMDatabase,
     pruneWords15Database,
+    pruneWords30Database,
     getAQuote,
     getWords }

@@ -71,17 +71,31 @@ const ActiveScore = ({score, mode, api}) => {
         "seconds": score
       }
 
-      // Create new record
-      api
-      .createWords15Score(newScore)
-        .then(result => {
-          // Prune database
-          api
-          .pruneWords15Database()
-          .then(setSubmitted(true))
+      if (mode.length === 15) {
+        // Create new record
+        api
+        .createWords15Score(newScore)
+          .then(result => {
+            // Prune database
+            api
+            .pruneWords15Database()
+            .then(setSubmitted(true))
+            .catch(error => console.log("uh-oh"))
+          })
           .catch(error => console.log("uh-oh"))
-        })
-        .catch(error => console.log("uh-oh"))
+      } else if (mode.length === 30) {
+        // Create new record
+        api
+        .createWords30Score(newScore)
+          .then(result => {
+            // Prune database
+            api
+            .pruneWords30Database()
+            .then(setSubmitted(true))
+            .catch(error => console.log("uh-oh"))
+          })
+          .catch(error => console.log("uh-oh"))
+      }
 
     } else if (mode.type === "quote") {
       const newScore = {
