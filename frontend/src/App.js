@@ -20,21 +20,41 @@ export default function App() {
   
  
   useEffect(() => {
-    // Get 15 words to start from the database
-    mongoService
-    .getWords(mode.length)
-    .then(initialWords => {
-      setTimer({startTime: null, endTime: null});
+    if (mode.type == "words") {
+      // Get 15 words to start from the database
+      mongoService
+      .getWords(mode.length)
+      .then(initialWords => {
+        setTimer({startTime: null, endTime: null});
 
-      const newQuote = {
-        array: initialWords.map(word => word + " "),
-        currIndex: 0
-      };
-      
-      newQuote.array[newQuote.array.length - 1] = newQuote.array[newQuote.array.length - 1].trim();
-      setQuoteObj(newQuote);
-      document.getElementById("text-area").focus();
-    })
+        const newQuote = {
+          array: initialWords.map(word => word + " "),
+          currIndex: 0
+        };
+        
+        newQuote.array[newQuote.array.length - 1] = newQuote.array[newQuote.array.length - 1].trim();
+        setQuoteObj(newQuote);
+        document.getElementById("text-area").focus();
+      })
+    } else if (mode.type =="quote") {
+      mongoService
+      .getAQuote()
+      .then(initialQuote => {
+        setTimer({startTime: null, endTime: null});
+
+        let quote = initialQuote[0]["Articles"];
+        quote = quote.split(" ")
+
+        const newQuote = {
+          array: quote.map(word => word + " "),
+          currIndex: 0
+        };
+
+        newQuote.array[newQuote.array.length - 1] = newQuote.array[newQuote.array.length - 1].trim();
+        setQuoteObj(newQuote);
+        document.getElementById("text-area").focus();
+      })
+    }
 
     // Get scores from DB
     mongoService
@@ -71,8 +91,9 @@ export default function App() {
       <button onClick={() => handleModeChange('words', 2)}>Words </button>
       <button onClick={() => handleModeChange('words', 3)}>Words 3</button>
       <button onClick={() => handleModeChange('words', 5)}>Words 5</button>
-      <button onClick={() => handleModeChange('words', 60)}>Words 60</button>
-      <button onClick={() => handleModeChange('time', 15)}>Time 15</button>
+      <button onClick={() => handleModeChange('quote', 0)}>Quote</button>
+      {/* <button onClick={() => handleModeChange('words', 60)}>Words 60</button> */}
+      {/* <button onClick={() => handleModeChange('time', 15)}>Time 15</button> */}
       <div className="text-container">
         {!timer.endTime 
         ? (
