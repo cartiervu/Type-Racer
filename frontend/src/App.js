@@ -15,7 +15,7 @@ export default function App() {
   });
   const [active, setActive] = useState(true);
   const [scores, setScores] = useState([]);
-  const [mode, setMode] = useState({type: 'words', length: 2});
+  const [mode, setMode] = useState({type: 'words', length: 15});
   const [isStarted, setIsStarted] = useState({start: null});
   
  
@@ -88,9 +88,9 @@ export default function App() {
 
   return (
     <>
-      <button onClick={() => handleModeChange('words', 2)}>Words </button>
-      <button onClick={() => handleModeChange('words', 3)}>Words 3</button>
-      <button onClick={() => handleModeChange('words', 5)}>Words 5</button>
+      <button onClick={() => handleModeChange('words', 2)}>Words 15</button>
+      <button onClick={() => handleModeChange('words', 3)}>Words 30</button>
+      {/* <button onClick={() => handleModeChange('words', 5)}>Words 5</button> */}
       <button onClick={() => handleModeChange('quote', 0)}>Quote</button>
       {/* <button onClick={() => handleModeChange('words', 60)}>Words 60</button> */}
       {/* <button onClick={() => handleModeChange('time', 15)}>Time 15</button> */}

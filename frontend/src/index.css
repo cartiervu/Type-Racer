@@ -90,3 +90,10 @@ input {
   width: 25vh;
   padding: 0;
 }
+
+.whitespace{
+  /* text-decoration: underline; */
+  /* white-space: pre; */
+  /* color: red; */
+  background-color: red;
+}
