@@ -1,7 +1,7 @@
-POST http://localhost:3001/api/userscores/
+POST http://localhost:3001/api/userscores/wpm
 Content-Type: application/json
 
 {
-    "username": "vvu",
-    "wpm": 200
+    "username": "abc",
+    "seconds": 5
 }

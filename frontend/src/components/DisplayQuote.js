@@ -46,7 +46,7 @@ const DisplayText = ({ cName, text, containsCursor = false}) => {
         <u>{text.charAt(0)}</u>{text.slice(1)}
       </div>
     )
-  } else if (cName == "quote-mistake") {
+  } else if (cName === "quote-mistake") {
     // SOURCE: https://stackoverflow.com/questions/59594129/how-can-i-insert-span-to-a-rendered-text-in-react
     // Colour the extra spaces
     const content = text.replaceAll(' ', '<span class="whitespace"> </span>')

@@ -2,13 +2,13 @@ require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
-const Userscores = require('./models/userscores.js')
+const {WPM, Score15} = require('./models/userscores.js')
 const Strings = require('./models/strings.js')
 const Words = require('./models/words.js')
 
 const app = express()
 
-app.use(express.json())                // Middleware: read JSON content requests
+app.use(express.json())             // Middleware: read JSON content requests
 app.use(express.static('build'))    // Middleware: Show the React frontend - Check if the build directory contains a file corresponding to the request's address
 app.use(cors())                     // Middleware: Communicate between 3000 and 3001
 
@@ -21,28 +21,39 @@ app.get('/', (request, response) => {
     response.send('<h1>Hello World! </h1>')
 })
 
-// Get all userscores in MongoDB as JSON
-app.get('/api/userscores', (request, response) => {
-    Userscores.find({}).sort({ wpm : 'descending'})
-        .then(userscore => {
-            response.json(userscore)
-        })
+// Get all wpm userscores in MongoDB as JSON
+app.get('/api/userscores/wpm', (request, response) => {
+    WPM
+    .find({}).sort({ wpm : 'descending'})
+            .then(userscore => {
+                response.json(userscore)
+            })
 })
 
-// Get specific userscore
-app.get('/api/userscores/:id', (request, response) => {
-    Userscores.findById(request.params.id)
-        .then(userscore => {
-            if (userscore) {
+// Get all wpm userscores in MongoDB as JSON
+app.get('/api/userscores/score15', (request, response) => {
+    Score15
+    .find({}).sort({ seconds : 'ascending'})
+            .then(userscore => {
                 response.json(userscore)
-            } else {
-                response.status(404).end() // No associated id
-            }
-        })
-        .catch (error => {
-            response.status(400).send({ error: 'malformatted id '}) // Invalid id
-        })
+            })
 })
+
+// // Get specific wpm userscore
+// app.get('/api/userscores/wpm/:id', (request, response) => {
+//     WPM
+//     .findById(request.params.id)
+//             .then(userscore => {
+//                 if (userscore) {
+//                     response.json(userscore)
+//                 } else {
+//                     response.status(404).end() // No associated id
+//                 }
+//             })
+//             .catch (error => {
+//                 response.status(400).send({ error: 'malformatted id '}) // Invalid id
+//             })all_userscores
+// })
 
 // Get a random quote
 app.get('/api/strings', (request, response) => {
@@ -68,74 +79,138 @@ app.get('/api/words/:num_words', (request, response) => {
         })
 })
 
-// Delete a specific userscore
-app.delete('/api/userscores/:id', (request, response) => {
-    Userscores.findByIdAndDelete(request.params.id)
-        .then(result => {
-            response.status(204).end() // Success, no content
-        })
-        .catch(error => 
-            response.status(400).json({error: 'could not delete'})
-        )
+// // Delete a specific userscore from the wpm datgabase
+// app.delete('/api/userscores/wpm/:id', (request, response) => {
+//     WPM
+//     .findByIdAndDelete(request.params.id)
+//             .then(result => {
+//                 response.status(204).end() // Success, no content
+//             })
+//             .catch(error => 
+//                 response.status(400).json({error: 'could not delete'})
+//             )
+// })
+
+// Prune the wpm database - keep only the top ten scores
+app.delete('/api/userscores/wpm', (request, response) => {
+
+    WPM
+    .countDocuments({})
+            .then(result => {
+                // More than 10 results
+                if (result > 10) {
+
+                    let idsToDelete = new Array();
+
+                    // Get these bottom results
+                    WPM
+                    .find({}).sort({ wpm : 'ascending'}).limit(result - 10)
+                        .then(result => {
+                                // Put into an array
+                                result.map(user =>{
+                                    idsToDelete.push(user._id.toString());
+                                })
+
+                            // Delete ids
+                            WPM
+                            .deleteMany({_id: { $in: idsToDelete}})
+                                    .then(result => {
+                                        response.status(204).end() // Success, no content
+                                    })
+                                    .catch(error => 
+                                        response.status(400).json({error: 'could not prune database'})
+                                    )
+                        }
+                    )
+                    .catch(err => {
+                        response.status(400).json({error: 'could not prune database'})
+                    })
+
+                } else {
+                    response.status(204).end() // Success, no content
+                }
+            })
+            .catch(error => {
+                response.status(400).json({error: 'could not prune database'})
+            })
+    
 })
 
-// Prune the userscores database - keep only the top ten scores
-app.delete('/api/userscores', (request, response) => {
+// Prune the score15 database - keep only the top ten scores
+app.delete('/api/userscores/score15', (request, response) => {
 
-    Userscores.countDocuments({})
-        .then(result => {
-            // More than 10 results
-            if (result > 10) {
+    Score15
+    .countDocuments({})
+            .then(result => {
+                // More than 10 results
+                if (result > 10) {
 
-                let idsToDelete = new Array();
+                    let idsToDelete = new Array();
 
-                // Get these bottom results
-                Userscores.find({}).sort({ wpm : 'ascending'}).limit(result - 10)
-                .then(result => {
-                        // Put into an array
-                        result.map(user =>{
-                            idsToDelete.push(user._id.toString());
-                        })
+                    // Get these bottom results
+                    Score15
+                    .find({}).sort({ seconds : 'descending'}).limit(result - 10)
+                        .then(result => {
+                                // Put into an array
+                                result.map(user =>{
+                                    idsToDelete.push(user._id.toString());
+                                })
 
-                        // Delete ids
-                        Userscores.deleteMany({_id: { $in: idsToDelete}})
-                            .then(result => {
-                                response.status(204).end() // Success, no content
-                            })
-                            .catch(error => 
-                                response.status(400).json({error: 'could not prune database'})
-                            )
-                    }
-                )
-                .catch(err => {
-                    response.status(400).json({error: 'could not prune database'})
-                })
+                            // Delete ids
+                            Score15
+                            .deleteMany({_id: { $in: idsToDelete}})
+                                    .then(result => {
+                                        response.status(204).end() // Success, no content
+                                    })
+                                    .catch(error => 
+                                        response.status(400).json({error: 'could not prune database'})
+                                    )
+                        }
+                    )
+                    .catch(err => {
+                        response.status(400).json({error: 'could not prune database'})
+                    })
 
-            } else {
+                } else {
+                    response.status(204).end() // Success, no content
+                }
+            })
+            .catch(error => {
+                response.status(400).json({error: 'could not prune database'})
+            })
+    
+})
+
+// Remove all scores from the wpm database
+app.delete('/api/userscores/wpm/deleteall', (request, response) => {
+
+    WPM
+    .collection.deleteMany({})
+            .then(result => {
                 response.status(204).end() // Success, no content
-            }
-        })
-        .catch(error => {
-            response.status(400).json({error: 'could not prune database'})
-        })
+            })
+            .catch(error => {
+                response.status(400).json({error: 'could not clean-up database'})
+            })
     
 })
 
-// Remove all scores
-app.delete('/api/all_userscores', (request, response) => {
+// Remove all scores from the score15 database
+app.delete('/api/userscores/score15/deleteall', (request, response) => {
 
-    Userscores.collection.deleteMany({})
-        .then(result => {
-            response.status(204).end() // Success, no content
-        })
-        .catch(error => {
-            response.status(400).json({error: 'could not clean-up database'})
-        })
+    Score15
+    .collection.deleteMany({})
+            .then(result => {
+                response.status(204).end() // Success, no content
+            })
+            .catch(error => {
+                response.status(400).json({error: 'could not clean-up database'})
+            })
     
 })
 
-// Post a new score
-app.post('/api/userscores', (request, response) => {
+// Post a new score to the wpm database
+app.post('/api/userscores/wpm', (request, response) => {
     const body = request.body
     
     // Content missing from post request
@@ -143,10 +218,10 @@ app.post('/api/userscores', (request, response) => {
         return (response.status(400).json({error: 'content missing'}))
     }
 
-    const newScore = new Userscores({
-        username: body.username,
-        wpm: body.wpm
-    })
+    const newScore = new WPM({
+            username: body.username,
+            wpm: body.wpm
+        })
 
     newScore.save()
         .then(savedScore => {
@@ -158,30 +233,56 @@ app.post('/api/userscores', (request, response) => {
 
 })
 
-// Update a specific score score
-app.put('/api/userscores/:id', (request, response) => {
-    const {id: _id} = request.params;
-    const body = request.body;
-
-    // Score missing from put request
-    if(!body.username || !body.wpm) {
+// Post a new score to the score15 database
+app.post('/api/userscores/score15', (request, response) => {
+    const body = request.body
+    
+    // Content missing from post request
+    if(!body.username || !body.seconds) {
         return (response.status(400).json({error: 'content missing'}))
     }
 
-    const score = new Userscores({
-        _id,
-        username: body.username,
-        wpm: body.wpm
-    })
+    const newScore = new Score15({
+            username: body.username,
+            seconds: body.seconds
+        })
 
-    Userscores.findByIdAndUpdate(_id, score)
-        .then(updatedScore => {
-            response.json(score)
+    newScore.save()
+        .then(savedScore => {
+            response.json(savedScore)
         })
         .catch(error => {
-            response.status(400).json({error: 'could not update'})
+            response.status(400).json({error: 'could not post'})
         })
+
 })
+
+// // Update a specific wpm score 
+// app.put('/api/userscores/wpm/:id', (request, response) => {
+//     const {id: _id} = request.params;
+//     const body = request.body;
+
+//     // Score missing from put request
+//     if(!body.username || !body.wpm) {
+//         return (response.status(400).json({error: 'content missing'}))
+//     }
+
+//     const score = new WPM
+// ({
+//         _id,
+//         username: body.username,
+//         wpm: body.wpm
+//     })
+
+//     WPM
+//     .findByIdAndUpdate(_id, score)
+//             .then(updatedScore => {
+//                 response.json(score)
+//             })
+//             .catch(error => {
+//                 response.status(400).json({error: 'could not update'})
+//             })
+// })
 
 // Invalid address
 const unknownEndpoint = (request, response) => {

@@ -20,7 +20,7 @@ export default function App() {
   
  
   useEffect(() => {
-    if (mode.type == "words") {
+    if (mode.type === "words") {
       // Get 15 words to start from the database
       mongoService
       .getWords(mode.length)
@@ -36,7 +36,14 @@ export default function App() {
         setQuoteObj(newQuote);
         document.getElementById("text-area").focus();
       })
-    } else if (mode.type =="quote") {
+
+      // Get scores from DB
+      mongoService
+      .getWords15Scores()
+      .then(initialScores => {
+        setScores(initialScores)
+      })
+    } else if (mode.type === "quote") {
       mongoService
       .getAQuote()
       .then(initialQuote => {
@@ -54,15 +61,15 @@ export default function App() {
         setQuoteObj(newQuote);
         document.getElementById("text-area").focus();
       })
+
+      // Get scores from DB
+      mongoService
+      .getWPMScores()
+      .then(initialScores => {
+        setScores(initialScores)
+      })
     }
 
-    // Get scores from DB
-    mongoService
-    .getAllScores()
-    .then(initialScores => {
-      setScores(initialScores)
-    })
-    
   }, [active, mode]);
 
 
@@ -103,7 +110,7 @@ export default function App() {
           ) 
         : (
             <>
-              <DisplayResults scores={scores} quoteObj={quoteObj} timeSplits={timeSplits} timer={timer} api={mongoService}/>
+              <DisplayResults scores={scores} quoteObj={quoteObj} timeSplits={timeSplits} timer={timer} mode={mode} api={mongoService}/>
               <button className="retry-button" onClick={() => handleRetryButton()}>RETRY</button>
             </>
           )}

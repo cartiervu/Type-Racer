@@ -1,0 +1,7 @@
+# PUT http://localhost:3001/api/userscores/62006bf8ad92bd7f39b259ca
+# Content-Type: application/json
+
+# {
+#     "username": "cvu",
+#     "wpm": 188
+# }

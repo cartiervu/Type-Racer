@@ -7,11 +7,11 @@ console.log('connecting to', url)
 var conn3 = mongoose.createConnection(url);
 
 // Schema in Mongo DB
-const stringsSchema = new mongoose.Schema(
+const wordsSchema = new mongoose.Schema(
     { Words: { type:  String , required : true }},
     { collection : 'words'})
 
-stringsSchema.set('toJSON', {
+wordsSchema.set('toJSON', {
     transform: (document, returnedObject) => {
         returnedObject.id = returnedObject._id.toString()
         delete returnedObject._id
@@ -21,4 +21,4 @@ stringsSchema.set('toJSON', {
 
 
 
-module.exports = conn3.model('Strings', stringsSchema)
+module.exports = conn3.model('Words', wordsSchema)

@@ -1,1 +1,1 @@
-DELETE http://localhost:3001/api/userscores/
+DELETE http://localhost:3001/api/userscores/wpm

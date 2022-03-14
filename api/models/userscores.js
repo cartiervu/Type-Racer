@@ -5,20 +5,28 @@ const url = process.env.MONGODB_URI_SCORES
 console.log('connecting to', url)
 
 var conn1 = mongoose.createConnection(url);
-    // .then(result => {
-    //     console.log('... successfully connected')
-    // })
-    // .catch((error) => {
-    //     console.log ('... error connecting to MongoDB:', error.message)
-    // })
 
 // Schema in Mongo DB
-const userscoresSchema = new mongoose.Schema({
+const wpmSchema = new mongoose.Schema({ 
     username: { type:  String , required : true },
-    wpm: { type:  Number , required : true }
+    wpm: { type:  Number , required : true }},
+    { collection : 'wpm'})
+
+wpmSchema.set('toJSON', {
+    transform: (document, returnedObject) => {
+        returnedObject.id = returnedObject._id.toString()
+        delete returnedObject._id
+        delete returnedObject.__v
+    }
 })
 
-userscoresSchema.set('toJSON', {
+// Schema in Mongo DB
+const score15Schema = new mongoose.Schema({ 
+    username: { type:  String , required : true },
+    seconds: { type:  Number , required : true }},
+    { collection : 'score15'})
+
+score15Schema.set('toJSON', {
     transform: (document, returnedObject) => {
         returnedObject.id = returnedObject._id.toString()
         delete returnedObject._id
@@ -27,5 +35,9 @@ userscoresSchema.set('toJSON', {
 })
 
 
+const WPM = conn1.model('wpm', wpmSchema);
+const Score15 = conn1.model('score15', score15Schema);
 
-module.exports = conn1.model('Userscore', userscoresSchema)
+module.exports = {
+    WPM, Score15
+}
