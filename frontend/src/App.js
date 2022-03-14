@@ -88,12 +88,14 @@ export default function App() {
 
   return (
     <>
-      <button onClick={() => handleModeChange('words', 2)}>Words 15</button>
-      <button onClick={() => handleModeChange('words', 3)}>Words 30</button>
-      {/* <button onClick={() => handleModeChange('words', 5)}>Words 5</button> */}
-      <button onClick={() => handleModeChange('quote', 0)}>Quote</button>
-      {/* <button onClick={() => handleModeChange('words', 60)}>Words 60</button> */}
-      {/* <button onClick={() => handleModeChange('time', 15)}>Time 15</button> */}
+      <div className="top-bar">
+        <button className="top-bar-button" onClick={() => handleModeChange('words', 2)}>Words 2</button>
+        <button className="top-bar-button" onClick={() => handleModeChange('words', 30)}>Words 30</button>
+        {/* <button onClick={() => handleModeChange('words', 5)}>Words 5</button> */}
+        <button className="top-bar-button" onClick={() => handleModeChange('quote', 0)}>Quote</button>
+        {/* <button onClick={() => handleModeChange('words', 60)}>Words 60</button> */}
+        {/* <button onClick={() => handleModeChange('time', 15)}>Time 15</button> */}
+      </div>
       <div className="text-container">
         {!timer.endTime 
         ? (
@@ -102,7 +104,7 @@ export default function App() {
         : (
             <>
               <DisplayResults scores={scores} quoteObj={quoteObj} timeSplits={timeSplits} timer={timer} api={mongoService}/>
-              <button onClick={() => handleRetryButton()}>RETRY</button>
+              <button className="retry-button" onClick={() => handleRetryButton()}>RETRY</button>
             </>
           )}
       </div>
