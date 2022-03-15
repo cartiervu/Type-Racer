@@ -213,8 +213,8 @@ export default function DisplayResults({ scores, quoteObj, timeSplits, timer, mo
       <hr/>
       <div className='wpm'>
         {mode.type === "words"
-          ? (<># of Seconds: {latestScore}</>)
-          : (<>Words Per Minute: {latestScore}</>)}
+          ? (<># of Seconds:  {latestScore}</>)
+          : (<>Words Per Minute:  {latestScore}</>)}
       </div>
     </div>
   )
