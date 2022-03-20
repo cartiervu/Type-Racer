@@ -2,7 +2,7 @@ require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
-const {WPM, Score15, Score30} = require('./models/userscores.js')
+const {ScoreQuote, Score15, Score30} = require('./models/userscores.js')
 const Strings = require('./models/strings.js')
 const Words = require('./models/words.js')
 
@@ -21,9 +21,9 @@ app.get('/', (request, response) => {
     response.send('<h1>Hello World! </h1>')
 })
 
-// Get all wpm userscores in MongoDB as JSON
-app.get('/api/userscores/wpm', (request, response) => {
-    WPM
+// Get all quote userscores in MongoDB as JSON
+app.get('/api/userscores/quote', (request, response) => {
+    ScoreQuote
     .find({}).sort({ wpm : 'descending'})
             .then(userscore => {
                 response.json(userscore)
@@ -33,7 +33,7 @@ app.get('/api/userscores/wpm', (request, response) => {
 // Get all 15 word userscores in MongoDB as JSON
 app.get('/api/userscores/score15', (request, response) => {
     Score15
-    .find({}).sort({ seconds : 'ascending'})
+    .find({}).sort({ wpm : 'descending'})
             .then(userscore => {
                 response.json(userscore)
             })
@@ -42,15 +42,15 @@ app.get('/api/userscores/score15', (request, response) => {
 // Get all 30 word userscores in MongoDB as JSON
 app.get('/api/userscores/score30', (request, response) => {
     Score30
-    .find({}).sort({ seconds : 'ascending'})
+    .find({}).sort({ wpm : 'descending'})
             .then(userscore => {
                 response.json(userscore)
             })
 })
 
-// // Get specific wpm userscore
-// app.get('/api/userscores/wpm/:id', (request, response) => {
-//     WPM
+// // Get specific quote userscore
+// app.get('/api/userscores/quote/:id', (request, response) => {
+//     ScoreQuote
 //     .findById(request.params.id)
 //             .then(userscore => {
 //                 if (userscore) {
@@ -88,9 +88,9 @@ app.get('/api/words/:num_words', (request, response) => {
         })
 })
 
-// // Delete a specific userscore from the wpm datgabase
-// app.delete('/api/userscores/wpm/:id', (request, response) => {
-//     WPM
+// // Delete a specific userscore from the quote datgabase
+// app.delete('/api/userscores/quote/:id', (request, response) => {
+//     ScoreQuote
 //     .findByIdAndDelete(request.params.id)
 //             .then(result => {
 //                 response.status(204).end() // Success, no content
@@ -100,10 +100,10 @@ app.get('/api/words/:num_words', (request, response) => {
 //             )
 // })
 
-// Prune the wpm database - keep only the top ten scores
-app.delete('/api/userscores/wpm', (request, response) => {
+// Prune the quote score database - keep only the top ten scores
+app.delete('/api/userscores/quote', (request, response) => {
 
-    WPM
+    ScoreQuote
     .countDocuments({})
             .then(result => {
                 // More than 10 results
@@ -112,7 +112,7 @@ app.delete('/api/userscores/wpm', (request, response) => {
                     let idsToDelete = new Array();
 
                     // Get these bottom results
-                    WPM
+                    ScoreQuote
                     .find({}).sort({ wpm : 'ascending'}).limit(result - 10)
                         .then(result => {
                                 // Put into an array
@@ -121,7 +121,7 @@ app.delete('/api/userscores/wpm', (request, response) => {
                                 })
 
                             // Delete ids
-                            WPM
+                            ScoreQuote
                             .deleteMany({_id: { $in: idsToDelete}})
                                     .then(result => {
                                         response.status(204).end() // Success, no content
@@ -158,7 +158,7 @@ app.delete('/api/userscores/score15', (request, response) => {
 
                     // Get these bottom results
                     Score15
-                    .find({}).sort({ seconds : 'descending'}).limit(result - 10)
+                    .find({}).sort({ wpm : 'ascending'}).limit(result - 10)
                         .then(result => {
                                 // Put into an array
                                 result.map(user =>{
@@ -203,7 +203,7 @@ app.delete('/api/userscores/score30', (request, response) => {
 
                     // Get these bottom results
                     Score30
-                    .find({}).sort({ seconds : 'descending'}).limit(result - 10)
+                    .find({}).sort({ wpm : 'ascending'}).limit(result - 10)
                         .then(result => {
                                 // Put into an array
                                 result.map(user =>{
@@ -235,10 +235,10 @@ app.delete('/api/userscores/score30', (request, response) => {
     
 })
 
-// Remove all scores from the wpm database
-app.delete('/api/userscores/wpm/deleteall', (request, response) => {
+// Remove all scores from the quote database
+app.delete('/api/userscores/quote/deleteall', (request, response) => {
 
-    WPM
+    ScoreQuote
     .collection.deleteMany({})
             .then(result => {
                 response.status(204).end() // Success, no content
@@ -277,8 +277,8 @@ app.delete('/api/userscores/score30/deleteall', (request, response) => {
     
 })
 
-// Post a new score to the wpm database
-app.post('/api/userscores/wpm', (request, response) => {
+// Post a new score to the quote database
+app.post('/api/userscores/quote', (request, response) => {
     const body = request.body
     
     // Content missing from post request
@@ -286,7 +286,7 @@ app.post('/api/userscores/wpm', (request, response) => {
         return (response.status(400).json({error: 'content missing'}))
     }
 
-    const newScore = new WPM({
+    const newScore = new ScoreQuote({
             username: body.username,
             wpm: body.wpm
         })
@@ -306,13 +306,13 @@ app.post('/api/userscores/score15', (request, response) => {
     const body = request.body
     
     // Content missing from post request
-    if(!body.username || !body.seconds) {
+    if(!body.username || !body.wpm) {
         return (response.status(400).json({error: 'content missing'}))
     }
 
     const newScore = new Score15({
             username: body.username,
-            seconds: body.seconds
+            wpm: body.wpm
         })
 
     newScore.save()
@@ -330,13 +330,13 @@ app.post('/api/userscores/score30', (request, response) => {
     const body = request.body
     
     // Content missing from post request
-    if(!body.username || !body.seconds) {
+    if(!body.username || !body.wpm) {
         return (response.status(400).json({error: 'content missing'}))
     }
 
     const newScore = new Score30({
             username: body.username,
-            seconds: body.seconds
+            wpm: body.wpm
         })
 
     newScore.save()
@@ -349,8 +349,8 @@ app.post('/api/userscores/score30', (request, response) => {
 
 })
 
-// // Update a specific wpm score 
-// app.put('/api/userscores/wpm/:id', (request, response) => {
+// // Update a specific quote score 
+// app.put('/api/userscores/quote/:id', (request, response) => {
 //     const {id: _id} = request.params;
 //     const body = request.body;
 
@@ -359,14 +359,13 @@ app.post('/api/userscores/score30', (request, response) => {
 //         return (response.status(400).json({error: 'content missing'}))
 //     }
 
-//     const score = new WPM
-// ({
+//     const score = new ScoreQuote ({
 //         _id,
 //         username: body.username,
 //         wpm: body.wpm
 //     })
 
-//     WPM
+//     ScoreQuote
 //     .findByIdAndUpdate(_id, score)
 //             .then(updatedScore => {
 //                 response.json(score)

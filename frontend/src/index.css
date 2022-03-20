@@ -92,6 +92,11 @@ input {
   padding: 0;
 }
 
+.score-screen {
+  display: flex;
+  flex-direction: row;
+}
+
 .whitespace{
   /* text-decoration: underline; */
   /* white-space: pre; */
@@ -136,6 +141,10 @@ input {
     padding: 15px;
   }
 
+  .text-container{
+    width: 75vw;
+  }
+
   .quotebox, .results {
     font-size: 2.5em;
   }
@@ -157,6 +166,9 @@ input {
 }
 
 @media screen and (min-width: 1024px) {
+  .text-container{
+    width: 55vw;
+  }
 
   .top-bar {
     width: 25vw;
