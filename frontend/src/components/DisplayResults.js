@@ -1,18 +1,23 @@
 import React from 'react'
 import { useState } from 'react';
 
+// Return the actual elapsed time
+function computeTime(quote, timer) {
+  return ((timer.endTime - timer.startTime) / 1000).toFixed(3);
+}
+
 // Return the WPM from the active user
 function computeScore(quote, timer, mode) {
-  if (mode.type === "words") {
-    // Time it took to do X words
-    return ((timer.endTime - timer.startTime) / 1000).toFixed(3);
-  } else {
+  // if (mode.type === "words") {
+  //   // Time it took to do X words
+  //   return ((timer.endTime - timer.startTime) / 1000).toFixed(3);
+  // } else {
     // Calculate WPM
     const words = (quote.split(' ')).length;
     const timeElapsed = (timer.endTime - timer.startTime) / 60000;
   
     return (words / timeElapsed).toFixed(1);
-  }
+  // }
 
 }
 
@@ -20,16 +25,16 @@ function computeScore(quote, timer, mode) {
 function findRank(scores, newScore, mode) {
   let rank = 0;
 
-  if (mode.type === "words") {
-    // We want the QUICKEST time (i.e. smallest)
-    // here, scores is sorted in ascending order
-    for (const key in scores) {
-      if (scores[key].seconds > newScore.seconds) {
-        return rank;
-      }
-      rank++;
-    }
-  } else if (mode.type === "quote") {
+  // if (mode.type === "words") {
+  //   // We want the QUICKEST time (i.e. smallest)
+  //   // here, scores is sorted in ascending order
+  //   for (const key in scores) {
+  //     if (scores[key].seconds > newScore.seconds) {
+  //       return rank;
+  //     }
+  //     rank++;
+  //   }
+  // } else if (mode.type === "quote") {
     // We want the HIGHEST wpm
     //  here, scores is sorted in descending order
     for (const key in scores) {
@@ -38,14 +43,14 @@ function findRank(scores, newScore, mode) {
       }
       rank++;
     }
-  }
+  // }
 
 
 
   return rank;
 }
 
-const ActiveScore = ({score, mode, api}) => {
+const ActiveScore = ({score, elapsedTime, mode, api}) => {
 
   const [username, setUsername] = useState("");
   const [submitted, setSubmitted] = useState(false)
@@ -64,14 +69,19 @@ const ActiveScore = ({score, mode, api}) => {
 
     event.preventDefault();
 
+    const newScore = {
+      "username": username,
+      "wpm": score
+    }
+
     // Create object to be POSTED
     if (mode.type === "words") {
-      const newScore = {
-        "username": username,
-        "seconds": score
-      }
+      // const newScore = {
+      //   "username": username,
+      //   "seconds": score
+      // }
 
-      if (mode.length === 15) {
+      if (mode.length === 3) {
         // Create new record
         api
         .createWords15Score(newScore)
@@ -83,7 +93,7 @@ const ActiveScore = ({score, mode, api}) => {
             .catch(error => console.log("uh-oh"))
           })
           .catch(error => console.log("uh-oh"))
-      } else if (mode.length === 30) {
+      } else if (mode.length === 5) {
         // Create new record
         api
         .createWords30Score(newScore)
@@ -98,18 +108,18 @@ const ActiveScore = ({score, mode, api}) => {
       }
 
     } else if (mode.type === "quote") {
-      const newScore = {
-        "username": username,
-        "wpm": score
-      }
+      // const newScore = {
+      //   "username": username,
+      //   "wpm": score
+      // }
 
       // Create new record
       api
-      .createWPMScore(newScore)
+      .createQuoteScore(newScore)
         .then(result => {
           // Prune database
           api
-          .pruneWPMDatabase()
+          .pruneQuoteDatabase()
           .then(setSubmitted(true))
           .catch(error => console.log("uh-oh"))
         })
@@ -149,23 +159,23 @@ const RegularScore = ({username, score}) => {
   )
 }
 
-const DisplayLeaderboard = ({ scores, latestScore, mode, api }) => {
+const DisplayLeaderboard = ({ scores, latestScore, elapsedTime, mode, api }) => {
   
   let tempScoreArray = [...scores]
   let newScore = null;
 
   // Create a temporary object to insert into a copy of the array (for the map function)
-  if (mode.type === "words") {
-    newScore = {
-      'seconds': latestScore,
-      'id': -1
-    }
-  } else if (mode.type === "quote") {
+  // if (mode.type === "words") {
+  //   newScore = {
+  //     'seconds': latestScore,
+  //     'id': -1
+  //   }
+  // } else if (mode.type === "quote") {
     newScore = {
       'wpm': latestScore,
       'id': -1
     }
-}
+  // }
 
 
   // Add to array in the correct spot
@@ -178,14 +188,23 @@ const DisplayLeaderboard = ({ scores, latestScore, mode, api }) => {
     <div className='leaderboard'>
       <div className='leaderboard-header'>
         <div className='username'>Name</div>
-        {mode.type === "words"
+        <div className='wpm'>WPM</div>
+        {/* <div> SECONDS </div> */}
+        {/* {mode.type === "words"
           ? (<div className='wpm'>Score</div>)
-          : (<div className='wpm'>WPM</div>)}
+          : (<div className='wpm'>WPM</div>)} */}
       </div>
       {tempScoreArray.map((score, index) => (
         <div key={score.id}>
           <div className='player-score-container'>
-            {rank >= 10 && index === rank
+          {rank >= 10 && index === rank
+              ? <></>
+              : (index === rank
+                  ? <ActiveScore score={score.wpm} elapsedTime={elapsedTime} mode={mode} api={api}/>
+                  : <RegularScore username={score.username} score={score.wpm}/>
+                )
+          }
+            {/* {rank >= 10 && index === rank
               ? <></>
               : (index === rank
                   ? (mode.type === "words"
@@ -196,7 +215,7 @@ const DisplayLeaderboard = ({ scores, latestScore, mode, api }) => {
                       ? <RegularScore username={score.username} score={score.seconds}/>
                       : <RegularScore username={score.username} score={score.wpm}/>
                     )
-              )}
+              )} */}
           </div>
         </div>
       ))}
@@ -206,16 +225,21 @@ const DisplayLeaderboard = ({ scores, latestScore, mode, api }) => {
 
 export default function DisplayResults({ scores, quoteObj, timeSplits, timer, mode, api }) {
   const latestScore = computeScore(quoteObj.array.join(""), timer, mode);
+  const elapsedTime = computeTime(quoteObj.array.join(""), timer);
 
   return (
-    <div className='results'>
-      <DisplayLeaderboard scores={scores} latestScore={latestScore} mode={mode} api={api}/>
-      <hr/>
-      <div className='wpm'>
-        {mode.type === "words"
-          ? (<># of Seconds:  {latestScore}</>)
-          : (<>Words Per Minute:  {latestScore}</>)}
+    <div className='score-screen'>
+      <div className='results'>
+        <DisplayLeaderboard scores={scores} latestScore={latestScore} elapsedTime={elapsedTime} mode={mode} api={api}/>
+        <hr/>
+        <div className='wpm'>
+          Words Per Minute:  {latestScore}
+          {/* {mode.type === "words"
+            ? (<># of Seconds:  {latestScore}</>)
+            : (<>Words Per Minute:  {latestScore}</>)} */}
+        </div>
       </div>
+      <div className='wpm player-active-score'>Elasped time: {elapsedTime} seconds</div>
     </div>
   )
 }
