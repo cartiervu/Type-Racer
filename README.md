@@ -1,6 +1,6 @@
 # Type-Racer
 
-[Screenshots/GIF Here]
+![2022-03-20 21 09 25](https://user-images.githubusercontent.com/43510280/159205352-56191231-de63-4bf9-be7d-0c059813cde2.gif)
 
 ## About
 Type Racer is a minimalistic typing test featuring various typing modes and a global leaderboard.
