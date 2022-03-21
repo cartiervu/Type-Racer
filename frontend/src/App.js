@@ -15,7 +15,7 @@ export default function App() {
   });
   const [active, setActive] = useState(true);
   const [scores, setScores] = useState([]);
-  const [mode, setMode] = useState({type: 'words', length: 15});
+  const [mode, setMode] = useState({type: 'words', length: 3});
   const [isStarted, setIsStarted] = useState({start: null});
   
  
@@ -38,14 +38,14 @@ export default function App() {
       })
 
       
-      if (mode.length === 15) {
+      if (mode.length === 3) {
         // Get scores from DB
         mongoService
         .getWords15Scores()
         .then(initialScores => {
           setScores(initialScores)
         })
-      } else if (mode.length === 30) {
+      } else if (mode.length === 5) {
         // Get scores from DB
         mongoService
         .getWords30Scores()
@@ -90,7 +90,7 @@ export default function App() {
 
       // Get scores from DB
       mongoService
-      .getWPMScores()
+      .getQuoteScores()
       .then(initialScores => {
         setScores(initialScores)
       })
@@ -122,8 +122,8 @@ export default function App() {
   return (
     <>
       <div className="top-bar">
-        <button className="top-bar-button" onClick={() => handleModeChange('words', 15)}>Words 15</button>
-        <button className="top-bar-button" onClick={() => handleModeChange('words', 30)}>Words 30</button>
+        <button className="top-bar-button" onClick={() => handleModeChange('words', 3)}>Words 15</button>
+        <button className="top-bar-button" onClick={() => handleModeChange('words', 5)}>Words 30</button>
         <button className="top-bar-button" onClick={() => handleModeChange('quote', 0)}>Quote</button>
         <button className="top-bar-button" onClick={() => handleModeChange('time', 15)}>Time 15</button>
       </div>

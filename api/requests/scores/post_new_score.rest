@@ -2,6 +2,6 @@ POST http://localhost:3001/api/userscores/score15
 Content-Type: application/json
 
 {
-    "username": "abc",
-    "seconds": 4
+    "username": "def",
+    "wpm": 978209
 }
