@@ -6,10 +6,12 @@ import { MemoizedTimer } from './Timer';
 export default function UserText({ quoteObj, timer, timeSplits, onFinish, isStarted, mode, setChartWordsCompleted, intervalId }) {
     const [userText, setUserText] = useState('');
     const [startCountdownTimer, setStartCountdownTimer] = useState(false);
+    const [counter, setCounter] = useState(0);
 
     if (!isStarted.start) {
       isStarted.start = true;
       setUserText('');
+      setCounter(0);
     }
 
     const handleKeyPress = (event) => {
@@ -32,17 +34,23 @@ export default function UserText({ quoteObj, timer, timeSplits, onFinish, isStar
       intervalId.current = setInterval(() => {
         if (timer.startTime){
           setChartWordsCompleted(prevArray => [...prevArray,quoteObj.currIndex]);
+          setCounter(prevCounter => prevCounter + 1);
         }
-      }, 500);
+      }, 1000);
+
+      if ((mode.type === "time") && (mode.length === counter)) {
+        onFinish();
+      }
   
       return () => clearInterval(intervalId.current);
-    }, [quoteObj]);
+    }, [quoteObj, counter]);
 
 
     return (
       <>
         {mode.type === 'time'
-        ? <MemoizedTimer initSeconds={mode.length} isStarted={startCountdownTimer} onFinish={(onFinish)}/> 
+        // ? <MemoizedTimer initSeconds={mode.length} isStarted={startCountdownTimer} onFinish={(onFinish)}/> 
+        ? <div className="counter"> {mode.length - counter}</div>
         : <DisplayWordsRemaining wordsComplete={quoteObj.currIndex} totalWords={quoteObj.array.length}/>}
         <DisplayQuote quoteObj={quoteObj} userText={userText}/>
         <div id="text-box">

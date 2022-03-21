@@ -1,6 +1,4 @@
 import React from 'react'
-import DisplayWordsRemaining from './DisplayWordsRemaining';
-import Timer from './Timer';
 
 function getCompletedUserText(quoteObj) {
   return quoteObj.array.slice(0, quoteObj.currIndex).join("");

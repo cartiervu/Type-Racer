@@ -11,18 +11,21 @@ function computeTime(quote, timer) {
 }
 
 // Return the WPM from the active user
-function computeScore(quote, timer, mode) {
-  // if (mode.type === "words") {
-  //   // Time it took to do X words
-  //   return ((timer.endTime - timer.startTime) / 1000).toFixed(3);
-  // } else {
-    // Calculate WPM
-    const words = (quote.split(' ')).length;
-    const timeElapsed = (timer.endTime - timer.startTime) / 60000;
-  
-    return (words / timeElapsed).toFixed(1);
-  // }
+function computeScore(quoteObj, timer, mode) {
+  var words;
+  var timeElapsed;
 
+  if (mode.type === "time") {
+    // Time it took to do X words
+    words = quoteObj.currIndex;
+    timeElapsed = mode.length / 60;
+  } else {
+    // Calculate WPM
+    words = (quoteObj.array.join("").split(' ')).length;
+    timeElapsed = (timer.endTime - timer.startTime) / 60000;
+  }
+
+  return (words / timeElapsed).toFixed(1);
 }
 
 // Return the rank associated with the active user's WPM
@@ -128,6 +131,18 @@ const ActiveScore = ({score, elapsedTime, mode, api}) => {
           .catch(error => console.log("uh-oh"))
         })
         .catch(error => console.log("uh-oh"))
+    } else if (mode.type === "time") {
+      // Create new record
+      api
+      .createTimeScore(newScore)
+        .then(result => {
+          // Prune database
+          api
+          .pruneTimeDatabase()
+          .then(setSubmitted(true))
+          .catch(error => console.log("uh-oh"))
+        })
+        .catch(error => console.log("uh-oh"))
     }
     
   }
@@ -228,11 +243,11 @@ const DisplayLeaderboard = ({ scores, latestScore, elapsedTime, mode, api }) => 
 }
 
 export default function DisplayResults({ scores, quoteObj, timeSplits, timer, mode, api, chartWordsCompleted}) {
-  const latestScore = computeScore(quoteObj.array.join(""), timer, mode);
+  const latestScore = computeScore(quoteObj, timer, mode);
   const elapsedTime = computeTime(quoteObj.array.join(""), timer);
   
   let wpmForChart = chartWordsCompleted.map((wordsCompleted, index) => {
-    const seconds = index * 0.5;
+    const seconds = index * 1;
     let wpm = 0;
 
     if (seconds > 0) {
@@ -242,15 +257,13 @@ export default function DisplayResults({ scores, quoteObj, timeSplits, timer, mo
     return wpm;
   })
 
-  wpmForChart.push(quoteObj.currIndex * (60 / parseFloat(elapsedTime)))
 
   let timeForChart = chartWordsCompleted.map((wordsCompleted, index) => {
-    const seconds = index * 0.5;
+    const seconds = index * 1;
     
     return seconds;
   })
 
-  timeForChart.push(parseFloat(elapsedTime))
 
 
   let x = timeForChart.filter((element, index) => {
@@ -260,6 +273,11 @@ export default function DisplayResults({ scores, quoteObj, timeSplits, timer, mo
   let y = wpmForChart.filter((element, index) => {
     return index % 2 === 0;
   })
+
+  x.push(parseFloat(elapsedTime))
+  y.push(quoteObj.currIndex * (60 / parseFloat(elapsedTime)))
+
+
 
 
   const data = {
@@ -285,15 +303,7 @@ export default function DisplayResults({ scores, quoteObj, timeSplits, timer, mo
     scales: {
       y: {
         beginAtZero: true
-      },
-      xAxes: [{
-        ticks: {
-           userCallback: function(item, index) {
-              if (!(index % 5)) return item;
-           },
-           autoSkip: false
-        }
-     }],
+      }
     }
   };
 

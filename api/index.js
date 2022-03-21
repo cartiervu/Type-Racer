@@ -2,7 +2,7 @@ require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
-const {ScoreQuote, Score15, Score30} = require('./models/userscores.js')
+const {ScoreQuote, ScoreTime, Score30} = require('./models/userscores.js')
 const Strings = require('./models/strings.js')
 const Words = require('./models/words.js')
 
@@ -30,9 +30,9 @@ app.get('/api/userscores/quote', (request, response) => {
             })
 })
 
-// Get all 15 word userscores in MongoDB as JSON
-app.get('/api/userscores/score15', (request, response) => {
-    Score15
+// Get all time userscores in MongoDB as JSON
+app.get('/api/userscores/time', (request, response) => {
+    ScoreTime
     .find({}).sort({ wpm : 'descending'})
             .then(userscore => {
                 response.json(userscore)
@@ -145,10 +145,10 @@ app.delete('/api/userscores/quote', (request, response) => {
     
 })
 
-// Prune the score15 database - keep only the top ten scores
-app.delete('/api/userscores/score15', (request, response) => {
+// Prune the time database - keep only the top ten scores
+app.delete('/api/userscores/time', (request, response) => {
 
-    Score15
+    ScoreTime
     .countDocuments({})
             .then(result => {
                 // More than 10 results
@@ -157,7 +157,7 @@ app.delete('/api/userscores/score15', (request, response) => {
                     let idsToDelete = new Array();
 
                     // Get these bottom results
-                    Score15
+                    ScoreTime
                     .find({}).sort({ wpm : 'ascending'}).limit(result - 10)
                         .then(result => {
                                 // Put into an array
@@ -166,7 +166,7 @@ app.delete('/api/userscores/score15', (request, response) => {
                                 })
 
                             // Delete ids
-                            Score15
+                            ScoreTime
                             .deleteMany({_id: { $in: idsToDelete}})
                                     .then(result => {
                                         response.status(204).end() // Success, no content
@@ -249,10 +249,10 @@ app.delete('/api/userscores/quote/deleteall', (request, response) => {
     
 })
 
-// Remove all scores from the score15 database
-app.delete('/api/userscores/score15/deleteall', (request, response) => {
+// Remove all scores from the time database
+app.delete('/api/userscores/time/deleteall', (request, response) => {
 
-    Score15
+    ScoreTime
     .collection.deleteMany({})
             .then(result => {
                 response.status(204).end() // Success, no content
@@ -301,8 +301,8 @@ app.post('/api/userscores/quote', (request, response) => {
 
 })
 
-// Post a new score to the score15 database
-app.post('/api/userscores/score15', (request, response) => {
+// Post a new score to the time database
+app.post('/api/userscores/time', (request, response) => {
     const body = request.body
     
     // Content missing from post request
@@ -310,7 +310,7 @@ app.post('/api/userscores/score15', (request, response) => {
         return (response.status(400).json({error: 'content missing'}))
     }
 
-    const newScore = new Score15({
+    const newScore = new ScoreTime({
             username: body.username,
             wpm: body.wpm
         })

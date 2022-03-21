@@ -1,17 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 export default function Timer({ initMinutes = 0, initSeconds = 0, isStarted = false, onFinish }) {
   const [minutes, setMinutes] = useState(initMinutes);
   const [seconds, setSeconds] = useState(initSeconds);
 
+  const timerIntervalId = useRef(null)
+
   useEffect(() => {
-    let interval = setInterval(() => {
+    timerIntervalId.current = setInterval(() => {
       if (isStarted) {
         if (seconds > 0) {
           setSeconds(seconds - 1);
         } else if (seconds === 0) {
           if (minutes === 0) {
-            clearInterval(interval);
+            clearInterval(timerIntervalId.current);
             onFinish();
           } else {
             setMinutes(minutes - 1);
@@ -22,7 +24,7 @@ export default function Timer({ initMinutes = 0, initSeconds = 0, isStarted = fa
     }, 1000)
 
     return () => {
-      clearInterval(interval);
+      clearInterval(timerIntervalId.current);
     };
   })
 

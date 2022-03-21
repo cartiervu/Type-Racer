@@ -1,13 +1,13 @@
 import axios from 'axios'
 
 // const quoteScoreUrl = "https://not-type-racer.herokuapp.com/api/userscores/wpm"
-// const words15ScoreUrl = "https://not-type-racer.herokuapp.com/api/userscores/score15"
+// const timeScoreUrl = "https://not-type-racer.herokuapp.com/api/userscores/score15"
 // const words30ScoreUrl = "https://not-type-racer.herokuapp.com/api/userscores/score30"
 // const stringUrl = "https://not-type-racer.herokuapp.com/api/strings"
 // const wordUrl = "https://not-type-racer.herokuapp.com/api/words"
 
 const quoteScoreUrl = "http://localhost:3001/api/userscores/quote"
-const words15ScoreUrl = "http://localhost:3001/api/userscores/score15"
+const timeScoreUrl = "http://localhost:3001/api/userscores/time"
 const words30ScoreUrl = "http://localhost:3001/api/userscores/score30"
 const stringUrl = "http://localhost:3001/api/strings"
 const wordUrl = "http://localhost:3001/api/words"
@@ -20,8 +20,8 @@ const getQuoteScores = () => {
     return request.then(response => response.data)
 }
 
-const getWords15Scores = () => {
-    const request = axios.get(words15ScoreUrl)
+const getTimeScores = () => {
+    const request = axios.get(timeScoreUrl)
     return request.then(response => response.data)
 }
 
@@ -35,8 +35,8 @@ const createQuoteScore = newObject => {
     return request.then(response => response.data)
 }
 
-const createWords15Score = newObject => {
-    const request = axios.post(words15ScoreUrl, newObject)
+const createTimeScore = newObject => {
+    const request = axios.post(timeScoreUrl, newObject)
     return request.then(response => response.data)
 }
 
@@ -51,8 +51,8 @@ const pruneQuoteDatabase = () => {
     return request.then(response => response.data)
 } 
 
-const pruneWords15Database = () => {
-    const request = axios.delete(words15ScoreUrl)
+const pruneTimeDatabase = () => {
+    const request = axios.delete(timeScoreUrl)
     return request.then(response => response.data)
 } 
 
@@ -87,13 +87,13 @@ const getWords = (num_words) => {
 
 
 export default { getQuoteScores,
-    getWords15Scores,
+    getTimeScores,
     getWords30Scores,
     createQuoteScore,
-    createWords15Score,
+    createTimeScore,
     createWords30Score,
     pruneQuoteDatabase,
-    pruneWords15Database,
+    pruneTimeDatabase,
     pruneWords30Database,
     getAQuote,
     getWords }
