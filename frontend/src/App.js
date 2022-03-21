@@ -52,6 +52,21 @@ export default function App() {
         .then(initialScores => {
           setScores(initialScores)
         })
+      } else if (mode.type === "time") {
+        mongoService
+        .getWords(120)
+        .then(initialWords => {
+          setTimer({startTime: null, endTime: null});
+
+          const newQuote = {
+            array: initialWords.map(word => word + " "),
+            currIndex: 0
+          };
+          
+          newQuote.array[newQuote.array.length - 1] = newQuote.array[newQuote.array.length - 1].trim();
+          setQuoteObj(newQuote);
+          document.getElementById("text-area").focus();
+       })
       }
       
     } else if (mode.type === "quote") {
@@ -110,12 +125,12 @@ export default function App() {
         <button className="top-bar-button" onClick={() => handleModeChange('words', 15)}>Words 15</button>
         <button className="top-bar-button" onClick={() => handleModeChange('words', 30)}>Words 30</button>
         <button className="top-bar-button" onClick={() => handleModeChange('quote', 0)}>Quote</button>
-        {/* <button onClick={() => handleModeChange('time', 15)}>Time 15</button> */}
+        <button className="top-bar-button" onClick={() => handleModeChange('time', 15)}>Time 15</button>
       </div>
       <div className="text-container">
         {!timer.endTime 
         ? (
-            <Text quoteObj={quoteObj} timer={timer} timeSplits={timeSplits} onFinish={(handleOnFinish)} isStarted={isStarted}/>
+            <Text quoteObj={quoteObj} timer={timer} timeSplits={timeSplits} onFinish={(handleOnFinish)} isStarted={isStarted} mode={mode}/>
           ) 
         : (
             <>

@@ -1,5 +1,6 @@
 import React from 'react'
 import DisplayWordsRemaining from './DisplayWordsRemaining';
+import Timer from './Timer';
 
 function getCompletedUserText(quoteObj) {
   return quoteObj.array.slice(0, quoteObj.currIndex).join("");
@@ -64,11 +65,10 @@ const DisplayText = ({ cName, text, containsCursor = false}) => {
   )
 }
 
-export default function DisplayQuote({ quoteObj, userText }) {
+export default function DisplayQuote({ quoteObj, userText, mode }) {
 
   return (
     <>
-      <DisplayWordsRemaining wordsComplete={quoteObj.currIndex} totalWords={quoteObj.array.length}/>
       <div className="text-staging">
         {/*   // Because the following functions receive a parameter quote in the form quote = quoteObj.array[quoteObj.currIndex]
               //  After we finish one quoteObj (and prior to receiving another from the API), React re-renders this component with an ArrayOutOfBoundException
