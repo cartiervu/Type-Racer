@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import mongoService from './services/mongo'
-
 import Text from './components/UserText';
 import DisplayResults from './components/DisplayResults'
 
@@ -15,7 +14,7 @@ export default function App() {
   });
   const [active, setActive] = useState(true);
   const [scores, setScores] = useState([]);
-  const [mode, setMode] = useState({type: 'words', length: 3});
+  const [mode, setMode] = useState({type: 'words', length: 30});
   const [isStarted, setIsStarted] = useState({start: null});
   
  
@@ -45,7 +44,7 @@ export default function App() {
         .then(initialScores => {
           setScores(initialScores)
         })
-      } else if (mode.length === 5) {
+      } else if (mode.length === 30) {
         // Get scores from DB
         mongoService
         .getWords30Scores()
@@ -105,6 +104,13 @@ export default function App() {
       endTime: performance.now(),
     };
     setTimer(newTimer);
+
+    // Clear the interval, finalize array for graphinh
+    clearInterval(intervalId.current)
+    // console.log(chartWordsCompleted)
+
+    // const elapsedTime = ((timer.endTime - timer.startTime) / 1000).toFixed(3);
+    // console.log(elapsedTime)
   }
 
   const handleRetryButton = () => {
@@ -112,29 +118,41 @@ export default function App() {
     setTimer({startTime: null, endTime: null});
     setQuoteObj({array: [""], currIndex: 0});
     setActive(!active);
+
+    // Clear the interval, start array over again
+    clearInterval(intervalId.current)
+    setChartWordsCompleted([]);
   }
 
   const handleModeChange = (type, length) => {
     setIsStarted({start: false});
     setMode({type: type, length: length});
+
+    // Clear the interval, start array over again
+    clearInterval(intervalId.current)
+    setChartWordsCompleted([]);
   }
+
+  // An array to hold the number of words completed every 500 ms
+  const [chartWordsCompleted, setChartWordsCompleted] = useState([]);
+  const intervalId = useRef(null)
 
   return (
     <>
       <div className="top-bar">
-        <button className="top-bar-button" onClick={() => handleModeChange('words', 3)}>Words 15</button>
-        <button className="top-bar-button" onClick={() => handleModeChange('words', 5)}>Words 30</button>
+        {/* <button className="top-bar-button" onClick={() => handleModeChange('words', 3)}>Words 15</button> */}
+        <button className="top-bar-button" onClick={() => handleModeChange('words', 30)}>Words</button>
         <button className="top-bar-button" onClick={() => handleModeChange('quote', 0)}>Quote</button>
         <button className="top-bar-button" onClick={() => handleModeChange('time', 15)}>Time 15</button>
       </div>
       <div className="text-container">
         {!timer.endTime 
         ? (
-            <Text quoteObj={quoteObj} timer={timer} timeSplits={timeSplits} onFinish={(handleOnFinish)} isStarted={isStarted} mode={mode}/>
+            <Text quoteObj={quoteObj} timer={timer} timeSplits={timeSplits} onFinish={(handleOnFinish)} isStarted={isStarted} setChartWordsCompleted={setChartWordsCompleted} intervalId={intervalId} mode={mode}/>
           ) 
         : (
             <>
-              <DisplayResults scores={scores} quoteObj={quoteObj} timeSplits={timeSplits} timer={timer} mode={mode} api={mongoService}/>
+              <DisplayResults scores={scores} quoteObj={quoteObj} timeSplits={timeSplits} timer={timer} mode={mode} api={mongoService} chartWordsCompleted={chartWordsCompleted}/>
               <button className="retry-button" onClick={() => handleRetryButton()}>RETRY</button>
             </>
           )}

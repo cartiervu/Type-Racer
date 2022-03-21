@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import DisplayQuote from './DisplayQuote';
 import DisplayWordsRemaining from './DisplayWordsRemaining';
 import { MemoizedTimer } from './Timer';
 
-export default function UserText({ quoteObj, timer, timeSplits, onFinish, isStarted, mode }) {
+export default function UserText({ quoteObj, timer, timeSplits, onFinish, isStarted, mode, setChartWordsCompleted, intervalId }) {
     const [userText, setUserText] = useState('');
     const [startCountdownTimer, setStartCountdownTimer] = useState(false);
 
@@ -27,6 +27,18 @@ export default function UserText({ quoteObj, timer, timeSplits, onFinish, isStar
         }
       }
     }
+
+    useEffect(() => {
+      intervalId.current = setInterval(() => {
+        if (timer.startTime){
+          setChartWordsCompleted(prevArray => [...prevArray,quoteObj.currIndex]);
+        }
+      }, 500);
+  
+      return () => clearInterval(intervalId.current);
+    }, [quoteObj]);
+
+
     return (
       <>
         {mode.type === 'time'

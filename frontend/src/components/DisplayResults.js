@@ -1,5 +1,9 @@
 import React from 'react'
 import { useState } from 'react';
+import {Line} from 'react-chartjs-2';
+import { Chart, registerables } from 'chart.js';
+Chart.register(...registerables);
+
 
 // Return the actual elapsed time
 function computeTime(quote, timer) {
@@ -93,7 +97,7 @@ const ActiveScore = ({score, elapsedTime, mode, api}) => {
             .catch(error => console.log("uh-oh"))
           })
           .catch(error => console.log("uh-oh"))
-      } else if (mode.length === 5) {
+      } else if (mode.length === 30) {
         // Create new record
         api
         .createWords30Score(newScore)
@@ -223,9 +227,75 @@ const DisplayLeaderboard = ({ scores, latestScore, elapsedTime, mode, api }) => 
   )
 }
 
-export default function DisplayResults({ scores, quoteObj, timeSplits, timer, mode, api }) {
+export default function DisplayResults({ scores, quoteObj, timeSplits, timer, mode, api, chartWordsCompleted}) {
   const latestScore = computeScore(quoteObj.array.join(""), timer, mode);
   const elapsedTime = computeTime(quoteObj.array.join(""), timer);
+  
+  let wpmForChart = chartWordsCompleted.map((wordsCompleted, index) => {
+    const seconds = index * 0.5;
+    let wpm = 0;
+
+    if (seconds > 0) {
+      wpm = wordsCompleted * (60 / seconds);
+    }
+    
+    return wpm;
+  })
+
+  wpmForChart.push(quoteObj.currIndex * (60 / parseFloat(elapsedTime)))
+
+  let timeForChart = chartWordsCompleted.map((wordsCompleted, index) => {
+    const seconds = index * 0.5;
+    
+    return seconds;
+  })
+
+  timeForChart.push(parseFloat(elapsedTime))
+
+
+  let x = timeForChart.filter((element, index) => {
+    return index % 2 === 0;
+  })
+
+  let y = wpmForChart.filter((element, index) => {
+    return index % 2 === 0;
+  })
+
+
+  const data = {
+    labels: x,
+    datasets: [
+      {
+        label: 'wpm',
+        lineTension: 0.5,
+
+        pointBackgroundColor: 'rgb(255,0,0)',
+        pointRadius: 2.5,
+
+        backgroundColor: 'rgba(255,0,0,1)',
+        borderColor: 'rgba(0,0,0,1)',
+        borderWidth: 2.5,
+
+        data: y
+      }
+    ]
+  }
+
+  const options = {
+    scales: {
+      y: {
+        beginAtZero: true
+      },
+      xAxes: [{
+        ticks: {
+           userCallback: function(item, index) {
+              if (!(index % 5)) return item;
+           },
+           autoSkip: false
+        }
+     }],
+    }
+  };
 
   return (
     <div className='score-screen'>
@@ -239,7 +309,10 @@ export default function DisplayResults({ scores, quoteObj, timeSplits, timer, mo
             : (<>Words Per Minute:  {latestScore}</>)} */}
         </div>
       </div>
-      <div className='wpm player-active-score'>Elasped time: {elapsedTime} seconds</div>
+
+      <div className='chart'>
+      <Line data={data} options={options} />
+      </div>
     </div>
   )
 }
