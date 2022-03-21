@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import DisplayQuote from './DisplayQuote';
 
-export default function UserText({ quoteObj, timer, timeSplits, onFinish, isStarted }) {
+export default function UserText({ quoteObj, timer, timeSplits, onFinish, isStarted, setChartWordsCompleted, intervalId }) {
 
     const [userText, setUserText] = useState('');
 
@@ -22,6 +22,16 @@ export default function UserText({ quoteObj, timer, timeSplits, onFinish, isStar
         }
       }
     }
+
+    useEffect(() => {
+      intervalId.current = setInterval(() => {
+        if (timer.startTime){
+          setChartWordsCompleted(prevArray => [...prevArray,quoteObj.currIndex]);
+        }
+      }, 500);
+  
+      return () => clearInterval(intervalId.current);
+    }, [quoteObj]);
 
     return (
       <>

@@ -94,7 +94,13 @@ input {
 
 .score-screen {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  align-items: center;
+}
+
+.chart {
+  width: 70vw;
+  height: 100%;
 }
 
 .whitespace{
@@ -163,6 +169,7 @@ input {
   .top-bar-button {
     font-size: 2.5vw;
   }
+
 }
 
 @media screen and (min-width: 1024px) {
@@ -176,6 +183,17 @@ input {
 
   .top-bar-button {
     font-size: 1.33vw;
+  }
+
+  .score-screen {
+    flex-direction: row;
+    align-items: center;
+  }
+  
+  .chart {
+    padding-left: 50px;
+    width: 35vw;
+    height: 100%;
   }
 }
 
