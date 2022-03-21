@@ -1,9 +1,9 @@
-# Not-Type-Racer
+# Type-Racer
 
 [Screenshots/GIF Here]
 
 ## About
-[Title Here] is a minimalistic typing test featuring various typing modes and a global leaderboard.
+Type Racer is a minimalistic typing test featuring various typing modes and a global leaderboard.
 
 ## Features
 * **Modes**: Number Words, Time Limit, Quotes
