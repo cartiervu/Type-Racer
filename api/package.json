@@ -2,10 +2,10 @@
   "name": "api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "functions/server.js",
   "scripts": {
     "build": "netlify-lambda build src",
-    "dev": "nodemon index-local.js",
+    "dev": "nodemon server-local.js",
     "build:ui": "rm -rf builld && cd '../frontend/' && npm run build && cp -r './build' '../api/'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
